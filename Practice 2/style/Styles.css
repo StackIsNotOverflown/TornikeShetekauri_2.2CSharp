@@ -1,0 +1,27 @@
+﻿body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 10px;
+    padding: 10px;
+    background-color: #FCFBF4;
+}
+
+.over_header {
+    text-align: center;
+    margin: 25px;
+}
+
+.header {
+    text-align: center;
+}
+
+.under_header {
+    text-align: center;
+    margin: 5px;
+}
+
+.the_people {
+    width: 30%;
+    display: inline-block;
+    text-align: center;
+    float : inline-start;
+}

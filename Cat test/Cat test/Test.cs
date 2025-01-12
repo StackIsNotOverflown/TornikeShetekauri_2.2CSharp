@@ -4,13 +4,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace Cat_test
 {
-    public partial class MainForm : Form
+    public partial class Test : Form
     {
         private IRTModel _irtModel;
         private Question _currentQuestion;
         private int _timeLeft;
 
-        public MainForm()
+        public Test()
         {
             InitializeComponent();
             _irtModel = new IRTModel();

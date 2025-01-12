@@ -127,7 +127,7 @@ namespace Cat_test
             try
             {
                 SaveToFile(name, surname);
-                MessageBox.Show("Data successfully saved to Results.txt", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Application.Run(new Test());
             }
             catch (Exception ex)
             {

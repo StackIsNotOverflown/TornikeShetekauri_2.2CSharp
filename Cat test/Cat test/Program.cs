@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+
 namespace Cat_test
 {
     internal static class Program
@@ -10,6 +12,7 @@ namespace Cat_test
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.Run(new Login());
+           string filePath = "C:\\Users\\User\\Desktop\\TornikeShetekauri_2.2CSharp\\Cat test\\Cat test\\Results.txt";
         }
     }
 }

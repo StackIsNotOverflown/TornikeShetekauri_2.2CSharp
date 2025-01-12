@@ -1,6 +1,6 @@
 ﻿namespace Cat_test
 {
-    partial class MainForm
+    partial class Test
     {
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.Label questionLabel;

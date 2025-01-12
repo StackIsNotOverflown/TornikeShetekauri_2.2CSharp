@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Cat_test
 {
@@ -11,7 +13,7 @@ namespace Cat_test
     public class IRTModel
     {
         private List<Question> _questions;
-        private double _currentAbility;
+        public double _currentAbility;
         private int _currentQuestionIndex;
 
         public IRTModel()
@@ -44,6 +46,7 @@ namespace Cat_test
         public double GetAbilityEstimate()
         {
             return _currentAbility;
+            
         }
 
         public bool HasMoreQuestions()

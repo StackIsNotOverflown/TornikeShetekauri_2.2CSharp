@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
@@ -33,7 +33,7 @@ namespace Cat_test
             timer1.Start();
         }
 
-        private void submitButton_Click(object sender, EventArgs e)
+        private void submitButton_Click(object sender, EventArgs e, string filePath, double _currentAbility)
         {
             int selectedOption = -1;
             if (radioButton1.Checked) selectedOption = 0;
@@ -44,7 +44,7 @@ namespace Cat_test
             if (selectedOption != -1)
             {
                 bool isCorrect = _irtModel.EvaluateAnswer(_currentQuestion, selectedOption);
-                MessageBox.Show(isCorrect ? "??????!(?? ????????? ?? ?????? ??????????!)" : "?????????.(?? ????????? ?? ?????? ??????????!)");
+               
 
                 _irtModel.UpdateAbility(isCorrect);
 
@@ -54,13 +54,17 @@ namespace Cat_test
                 }
                 else
                 {
-                    MessageBox.Show("????? ????????????.");
+                    MessageBox.Show("ტესტი დასრულებულია.");
                     timer1.Stop();
+                    using (StreamWriter writer = new StreamWriter(filePath, true))
+                    {
+                        writer.WriteLine("Ability = "+_currentAbility+".");
+                    }
                 }
             }
             else
             {
-                MessageBox.Show("?????? ???-???? ??????.");
+                //idk for now
             }
         }
 
@@ -69,12 +73,12 @@ namespace Cat_test
             if (_timeLeft > 0)
             {
                 _timeLeft--;
-                timeLabel.Text = $"????????? ???: {_timeLeft / 60:D2}:{_timeLeft % 60:D2}";
+                timeLabel.Text = $"დარჩენილი დრო: {_timeLeft / 60:D2}:{_timeLeft % 60:D2}";
             }
             else
             {
                 timer1.Stop();
-                MessageBox.Show("??? ????????!");
+                MessageBox.Show("დრო ამოიწურა!");
                 LoadNextQuestion();
             }
         }

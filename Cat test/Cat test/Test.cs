@@ -60,7 +60,7 @@ namespace Cat_test
                    // using (StreamWriter writer = new StreamWriter, true, string fp)
                    using (StreamWriter writer = new StreamWriter(fp, true))
                     {
-                        writer.WriteLine = "Ability =" + _currentAbility + ".";
+                        writer.WriteLine = "Ability =" + _currentAbility + ".";// ეს მიერორებს და არ ვიცი რატომ
                     }
                     
                      

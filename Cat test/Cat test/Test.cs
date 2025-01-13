@@ -56,10 +56,15 @@ namespace Cat_test
                 {
                     MessageBox.Show("ტესტი დასრულებულია.");
                     timer1.Stop();
-                    using (StreamWriter writer = new StreamWriter(filePath, true))
+                    string fp = "C:\\Users\\User\\Desktop\\TornikeShetekauri_2.2CSharp\\Cat test\\Cat test\\Results.txt";
+                   // using (StreamWriter writer = new StreamWriter, true, string fp)
+                   using (StreamWriter writer = new StreamWriter(fp, true))
                     {
-                        writer.WriteLine("Ability = "+_currentAbility+".");
+                        writer.WriteLine = "Ability =" + _currentAbility + ".";
                     }
+                    
+                     
+                    
                 }
             }
             else

@@ -119,14 +119,14 @@ namespace Cat_test
         private System.Windows.Forms.Button Submit;
         private System.Windows.Forms.Label label1;
 
-        private void Submit_Click(object sender, EventArgs e, string filePath)
+        private void Submit_Click(object sender, EventArgs e)
         {
             string name = Name1.Text;
             string surname = Surname.Text;
 
             try
             {
-                SaveToFile(name, surname, filePath);
+                SaveToFile(name, surname);
 
                
                 new Test().ShowDialog(); 
@@ -137,9 +137,9 @@ namespace Cat_test
             }
         }
 
-        private void SaveToFile(string name, string surname , string filePath)
+        private void SaveToFile(string name, string surname)
         {
-             
+            string filePath = "C:\\Users\\User\\Desktop\\TornikeShetekauri_2.2CSharp\\Cat test\\Cat test\\Results.txt";
 
             using (StreamWriter writer = new StreamWriter(filePath, true))
             {

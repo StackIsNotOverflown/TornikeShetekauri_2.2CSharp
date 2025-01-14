@@ -56,15 +56,19 @@ namespace Cat_test
                 {
                     MessageBox.Show("ტესტი დასრულებულია.");
                     timer1.Stop();
-                    string fp = "C:\\Users\\User\\Desktop\\TornikeShetekauri_2.2CSharp\\Cat test\\Cat test\\Results.txt";
-                   // using (StreamWriter writer = new StreamWriter, true, string fp)
-                   using (StreamWriter writer = new StreamWriter(fp, true))
+                    string fp = @"../../../Results.txt";
+                    // using (StreamWriter writer = new StreamWriter, true, string fp)
+                    try
                     {
-                        writer.WriteLine = "Ability =" + _currentAbility + ".";// ეს მიერორებს და არ ვიცი რატომ
+                        using (StreamWriter writer = new StreamWriter(fp))
+                        {
+                            writer.Write("Ability =" + _currentAbility + ".");
+                        }
                     }
-                    
-                     
-                    
+                    catch (Exception exp)
+                    {
+                        //TODO 
+                    }
                 }
             }
             else

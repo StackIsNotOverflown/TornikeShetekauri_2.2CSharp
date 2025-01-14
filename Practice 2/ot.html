@@ -1,11 +1,106 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OT Page</title>
-    <link rel="stylesheet" href="Styles2.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f2f3f9;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            max-width: 1200px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-section, .right-section {
+            padding: 40px;
+        }
+
+        .left-section {
+            flex: 1;
+            background-color: #f2f3f9;
+        }
+
+        .left-section h6 {
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #999;
+        }
+
+        .left-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .left-section p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .right-section {
+            flex: 1;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .right-section h6 {
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #e86c27;
+        }
+
+        .right-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form textarea {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #e86c27;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        form button:hover {
+            background-color: #d95f1f;
+        }
+    </style>
 </head>
 <body>
     <div class="container">

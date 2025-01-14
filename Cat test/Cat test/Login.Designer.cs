@@ -139,8 +139,9 @@ namespace Cat_test
 
         private void SaveToFile(string name, string surname)
         {
-            string filePath = "C:\\Users\\User\\Desktop\\TornikeShetekauri_2.2CSharp\\Cat test\\Cat test\\Results.txt";
-
+            string filePath = @"../../../Results.txt";
+            FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            
             using (StreamWriter writer = new StreamWriter(filePath, true))
             {
                 writer.WriteLine($"Name: {name}");

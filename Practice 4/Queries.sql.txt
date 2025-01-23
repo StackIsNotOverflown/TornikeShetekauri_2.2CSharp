@@ -1,0 +1,202 @@
+b1)
+SELECT pc.model, pc.speed, pc.hd
+FROM PC pc
+JOIN Product prod ON pc.model = prod.model
+WHERE prod.type = 'PC' AND pc.price < 500;
+
+
+2)
+SELECT DISTINCT maker type
+FROM Product 
+Where type = 'printer'
+
+3) SELECT model, ram, screen
+FROM Laptop
+WHERE price > 1000
+//es ratomrac tavidan urevda//
+
+4)
+Select *
+from printer
+where color = 'y'
+
+
+5)
+SELECT model, speed, hd
+FROM PC
+WHERE price < 600 AND cd IN ('12x', '24x')
+
+6)
+SELECT p.maker, l.speed
+FROM Product p
+JOIN Laptop l ON p.model = l.model
+WHERE hd >= 10
+--Your query returned the correct dataset on the first (available) database, --but --it returned incorrect dataset on the second checking database.--
+--* Wrong number of records (more by 2)--
+--This exercise has FAQ--
+7)
+-es sainteresoa 
+Select *
+FROM product
+WHERE maker = 'B'
+
+8)
+SELECT DISTINCT maker
+FROM Product 
+WHERE type = 'PC'
+  AND maker NOT IN (
+      SELECT DISTINCT maker
+      FROM Product 
+      WHERE type = 'Laptop')
+9)
+SELECT DISTINCT p.maker
+FROM Product p
+JOIN PC pc ON p.model = pc.model
+WHERE pc.speed >= 450
+
+10)
+SELECT model, price
+FROM Printer
+WHERE price = (SELECT MAX(price) FROM Printer)
+
+11)
+SELECT AVG(speed)
+FROM pc
+
+12)
+SELECT AVG(speed)
+FROM laptop
+WHERE price > 1000
+
+13)
+SELECT AVG(pc.speed) AS avg_speed
+FROM Product p
+JOIN PC pc ON p.model = pc.model
+WHERE p.maker = 'A'
+
+14)
+SELECT c.class, s.name, c.country
+FROM Ships s
+JOIN Classes c ON s.class = c.class
+WHERE c.numGuns >= 10
+
+15) 
+SELECT hd
+FROM PC
+GROUP BY hd
+HAVING COUNT(hd) >= 2
+
+16)
+SELECT 
+pc1.model AS biggest,
+pc2.model AS smallest,
+pc1.speed,
+pc1.ram
+FROM PC pc1
+JOIN PC pc2 ON pc1.speed = pc2.speed AND pc1.ram = pc2.ram
+WHERE pc1.model > pc2.model
+
+17)
+SELECT 
+    prd.type,
+    lp2.model,
+    lp2.speed
+FROM Laptop lp2
+JOIN Product prd ON prd.model = lp2.model
+WHERE lp2.speed < ALL (SELECT pc1.speed FROM PC pc1)
+--უკვე რთულდება--
+
+18)
+SELECT DISTINCT maker, price
+FROM Printer pri JOIN Product pro ON (pri.model=pro.model)
+WHERE price = (SELECT MIN(price) FROM Printer WHERE color = 'y')  AND color = 'y'
+
+19)
+SELECT maker, AVG(screen)
+FROM Laptop L JOIN Product P ON (L.model = P.model)
+GROUP BY maker
+
+20)
+SELECT maker, COUNT(model)
+FROM Product
+GROUP BY maker, type
+HAVING COUNT(model) >=3 AND type = 'PC'SELECT maker, COUNT(model)
+FROM Product
+GROUP BY maker, type
+HAVING COUNT(model) >=3 AND type = 'PC'
+
+21)
+SELECT maker, MAX(price)
+FROM Product PR JOIN PC CO ON (PR.model = CO.model)
+GROUP BY maker
+
+22)
+SELECT speed, AVG(price)
+FROM PC 
+WHERE speed > 600
+GROUP BY speed
+
+23)
+SELECT  maker
+FROM Product pr JOIN PC p ON (pr.model = p.model)
+WHERE speed >= 750
+
+INTERSECT
+
+SELECT  maker
+FROM Product pr JOIN Laptop l ON (pr.model = l.model)
+WHERE speed >= 750
+
+24)
+WITH all_products AS ( SELECT MODEL,PRICE FROM PC
+UNION
+SELECT MODEL,PRICE FROM LAPTOP
+UNION
+SELECT MODEL,PRICE FROM PRINTER)
+
+SELECT MODEL FROM ALL_PRODUCTS
+
+WHERE price = (SELECT MAX(PRICE) FROM ALL_PRODUCTS)
+
+25)
+SELECT DISTINCT p.maker
+FROM Product p
+JOIN Printer pr ON p.model = pr.model
+JOIN PC pc ON p.model = pc.model
+WHERE pc.ram = (SELECT MIN(ram) FROM PC)
+  AND pc.speed = (SELECT MAX(speed) 
+                  FROM PC 
+                  WHERE ram = (SELECT MIN(ram) FROM PC))
+  AND p.type = 'PC'
+
+
+26)
+
+WITH overall AS (SELECT price, maker FROM PC p JOIN Product pr ON (p.model = pr.model)
+WHERE maker = 'A'
+
+UNION ALL
+
+SELECT price, maker FROM Laptop l JOIN Product pr ON (l.model = pr.model)
+WHERE maker = 'A')
+
+SELECT AVG(price) FROM overallWITH overall AS (SELECT price, maker FROM PC p JOIN Product pr ON (p.model = pr.model)
+WHERE maker = 'A'
+
+UNION ALL
+
+SELECT price, maker FROM Laptop l JOIN Product pr ON (l.model = pr.model)
+WHERE maker = 'A')
+
+SELECT AVG(price) FROM overall
+
+27)
+SELECT maker, AVG(hd) 
+FROM (SELECT  Product.maker, PC.hd
+FROM PC JOIN Product ON (PC.model = Product.model)
+WHERE maker IN (SELECT maker FROM Product where type = 'Printer')
+ )AS result
+GROUP By result.maker
+
+
+

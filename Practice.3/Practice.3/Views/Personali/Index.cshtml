@@ -1,0 +1,64 @@
+﻿@model List<Practice._3.Models.Personali>
+
+@{
+    ViewBag.Title = "Personali List";
+}
+
+<h2>Personali List</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Personali ID</th>
+            <th>Gvari</th>
+            <th>Saxeli</th>
+            <th>Ganyofileba</th>
+            <th>Qalaqi</th>
+            <th>Regioni</th>
+            <th>Raioni</th>
+            <th>Xelfasi</th>
+            <th>Asaki</th>
+            <th>Staji</th>
+            <th>Tarigi Dabadebis</th>
+            <th>Sqesi</th>
+            <th>Misamarti Saxlis</th>
+            <th>Teleponi Saxlis</th>
+            <th>Mobiluri</th>
+            <th>Email</th>
+            <th>Ierarqia</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var personali in Model)
+        {
+                <tr>
+                    <td>@personali.personaliID</td>
+                    <td>@personali.gvari</td>
+                    <td>@personali.saxeli</td>
+                    <td>@personali.ganyofileba</td>
+                    <td>@personali.qalaqi</td>
+                    <td>@personali.regioni</td>
+                    <td>@personali.raioni</td>
+                    <td>@personali.xelfasi</td>
+                    <td>@personali.asaki</td>
+                    <td>@personali.staji</td>
+                    <td>@personali.tarigi_dabadebis</td>
+                    <td>@personali.sqesi</td>
+                    <td>@personali.misamarti_saxlis</td>
+                    <td>@personali.teleponi_saxlis</td>
+                    <td>@personali.mobiluri</td>
+                    <td>@personali.email</td>
+                    <td>@personali.ierarqia</td>
+                    <td>
+                    @Html.ActionLink("Edit", "Edit", new { personaliID = personali.personaliID }) |
+                    @Html.ActionLink("Delete", "Delete", new { personaliID = personali.personaliID })
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    @Html.ActionLink("პერსონალის დამატება", "Add", null, new { @class = "btn btn-primary" })
+</p>

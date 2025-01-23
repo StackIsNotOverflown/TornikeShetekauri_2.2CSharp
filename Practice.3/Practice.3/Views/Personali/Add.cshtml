@@ -1,0 +1,25 @@
+﻿@model Practice._3.Models.Personali
+
+@{
+    ViewBag.Title = "Add New Personali";
+}
+
+<h2>Add New Personali</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @Html.LabelFor(model => model.personaliID)
+        @Html.TextBoxFor(model => model.personaliID, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.gvari)
+        @Html.TextBoxFor(model => model.gvari, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.saxeli)
+        @Html.TextBoxFor(model => model.saxeli, new { @class = "form-control" })
+    </div>
+    <!-- Repeat similar div blocks for all other fields -->
+    <button type="submit" class="btn btn-primary">Save</button>
+}

@@ -1,0 +1,30 @@
+﻿@model Practice._3.Models.Order
+
+@{
+    ViewBag.Title = "Add New Order";
+}
+
+<h2>Add New Order</h2>
+
+@using (Html.BeginForm())
+
+{
+    <div class="form-group">
+        @Html.LabelFor(model => model.shemkvetiID)
+        @Html.TextBoxFor(model => model.shemkvetiID, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.personaliID)
+        @Html.TextBoxFor(model => model.personaliID, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.iuridiuli_fizikuri)
+        @Html.TextBoxFor(model => model.iuridiuli_fizikuri, new { @class = "form-control" })
+    </div>
+
+    <!-- Add more fields as required -->
+
+    <button type="submit" class="btn btn-primary">Save</button>
+}

@@ -1,0 +1,63 @@
+﻿@model List<Practice._3.Models.Order>
+
+@{
+    ViewBag.Title = "Order List";
+}
+
+<h2>Order List</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Shemkveti ID</th>
+            <th>Personali ID</th>
+            <th>Iuridiuli/Fizikuri</th>
+            <th>Gvari</th>
+            <th>Saxeli</th>
+            <th>Qalaqi</th>
+            <th>Regioni</th>
+            <th>Raioni</th>
+            <th>Sqesi</th>
+            <th>Misamarti</th>
+            <th>Mobiluri</th>
+            <th>Firmis Dasaxeleba</th>
+            <th>Mobiluri Direqtoris</th>
+            <th>Gvari Direqtoris</th>
+            <th>Sabanko Angarishi</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+
+        {
+            <tr>
+                <td>@order.shemkvetiID</td>
+                <td>@order.personaliID</td>
+                <td>@order.iuridiuli_fizikuri</td>
+                <td>@order.gvari</td>
+                <td>@order.saxeli</td>
+                <td>@order.qalaqi</td>
+                <td>@order.regioni</td>
+                <td>@order.raioni</td>
+                <td>@order.sqesi</td>
+                <td>@order.misamarti</td>
+                <td>@order.mobiluri</td>
+                <td>@order.firmis_dasaxeleba</td>
+                <td>@order.mobiluri_direqtoris</td>
+                <td>@order.gvari_direqtoris</td>
+                <td>@order.sabanko_angarishi</td>
+                <td>@order.email</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { shemkvetiID = order.shemkvetiID }) |
+                    @Html.ActionLink("Delete", "Delete", new { shemkvetiID = order.shemkvetiID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    @Html.ActionLink("Add New Order", "Add")
+</p>

@@ -9,7 +9,7 @@ public class MachineDbContext : System.Data.Entity.DbContext
     }
 
     public System.Data.Entity.DbSet<Order> Orders { get; set; }
-    public System.Data.Entity.DbSet<Personali> Personalis { get; set; }
+    public System.Data.Entity.DbSet<Customer> Personalis { get; set; }
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {

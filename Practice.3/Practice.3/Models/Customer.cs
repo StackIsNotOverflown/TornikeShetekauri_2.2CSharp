@@ -1,6 +1,6 @@
 ﻿namespace Practice._3.Models
 {
-    public class Personali
+    public class Customer
     {
       public string personaliID          {get; set;}
       public string gvari                {get; set;}

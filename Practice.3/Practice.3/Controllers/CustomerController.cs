@@ -5,7 +5,7 @@ namespace Practice._3.Controllers
 {
     public class PersonaliController : Controller
     {
-        private static List<Personali> personaliList = new List<Personali>();
+        private static List<Customer> personaliList = new List<Customer>();
 
         public ActionResult Index()
         {
@@ -18,7 +18,7 @@ namespace Practice._3.Controllers
         }
 
         [HttpPost]
-        public ActionResult Add(Personali personali)
+        public ActionResult Add(Customer personali)
         {
             if (ModelState.IsValid)
             {
@@ -39,7 +39,7 @@ namespace Practice._3.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(Personali personali)
+        public ActionResult Edit(Customer personali)
         {
             var existingPersonali = personaliList.FirstOrDefault(p => p.personaliID == personali.personaliID);
             if (existingPersonali != null)

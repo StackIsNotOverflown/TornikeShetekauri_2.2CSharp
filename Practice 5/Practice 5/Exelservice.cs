@@ -1,16 +1,20 @@
 using OfficeOpenXml;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Practice_5
 {
-    public class ExcelService
+    public class Exelservice
     {
         public byte[] GenerateExcel(List<Employee> employees)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; 
+
             using (var package = new ExcelPackage())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Employees");
+                var worksheet = package.Workbook.Worksheets.Add("Employees"); 
 
+               
                 worksheet.Cells[1, 1].Value = "personalID";
                 worksheet.Cells[1, 2].Value = "gvari";
                 worksheet.Cells[1, 3].Value = "saxeli";
@@ -27,6 +31,12 @@ namespace Practice_5
                 worksheet.Cells[1, 14].Value = "teleponi_saxlis";
                 worksheet.Cells[1, 15].Value = "mobiluri";
                 worksheet.Cells[1, 16].Value = "email";
+
+               
+                if (employees == null || employees.Count == 0)
+                {
+                    return package.GetAsByteArray(); 
+                }
 
                 for (int i = 0; i < employees.Count; i++)
                 {
@@ -48,7 +58,7 @@ namespace Practice_5
                     worksheet.Cells[i + 2, 16].Value = employees[i].email;
                 }
 
-                return package.GetAsByteArray();
+                return package.GetAsByteArray(); 
             }
         }
     }

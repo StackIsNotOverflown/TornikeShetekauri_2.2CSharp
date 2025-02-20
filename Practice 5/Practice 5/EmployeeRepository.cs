@@ -7,7 +7,7 @@ namespace Practice_5
 {
     public class EmployeeRepository
     {
-        private readonly string _connectionString = "Server=YOUR_SERVER;Database=YOUR_DATABASE;User Id=YOUR_USER;Password=YOUR_PASSWORD;";
+        private readonly string _connectionString = "Data Source=ERROR\\SQLEXPRESS;Initial Catalog=Orders;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
 
         public List<Employee> GetAllEmployees()
         {

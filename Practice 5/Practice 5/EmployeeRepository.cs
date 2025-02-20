@@ -1,105 +1,80 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace Practice_5
 {
     public class EmployeeRepository
     {
-        private readonly string _connectionString;
+        private readonly string _connectionString = "Server=YOUR_SERVER;Database=YOUR_DATABASE;User Id=YOUR_USER;Password=YOUR_PASSWORD;";
 
-        public EmployeeRepository(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
-       
-        public async Task<List<Employee>> GetEmployeesAsync()
+        public List<Employee> GetAllEmployees()
         {
             var employees = new List<Employee>();
 
-            using (var connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                var query = "SELECT * FROM Employees"; 
-                var command = new SqlCommand(query, connection);
-
-                try
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Employees", connection))
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
+                    while (reader.Read())
                     {
-                        while (await reader.ReadAsync())
+                        employees.Add(new Employee
                         {
-                            employees.Add(new Employee
-                            {
-                                personalID = reader.GetInt32(0),
-                                gvari = reader.GetString(1),
-                                saxeli = reader.GetString(2),
-                                ganyofileba = reader.GetString(3),
-                                qalaqi = reader.GetString(4),
-                                regioni = reader.GetString(5),
-                                raioni = reader.GetString(6),
-                                xelfasi = reader.GetDecimal(7),
-                                asaki = reader.GetInt32(8),
-                                staji = reader.GetInt32(9),
-                                tarigi_dabadebis = reader.GetString(10),
-                                sqesi = reader.GetString(11),
-                                misamarti_saxlis = reader.GetString(12),
-                                teleponi_saxlis = reader.GetString(13),
-                                mobiluri = reader.GetString(14),
-                                email = reader.GetString(15)
-                            });
-                        }
+                            ID = reader.GetInt32(0),
+                            Gvari = reader.GetString(1),
+                            Saxeli = reader.GetString(2),
+                            Ganyofileba = reader.GetString(3),
+                            Qalaqi = reader.GetString(4),
+                            Regioni = reader.IsDBNull(5) ? null : reader.GetString(5),
+                            Raioni = reader.IsDBNull(6) ? null : reader.GetString(6),
+                            Xelfasi = reader.GetDouble(7),
+                            Asaki = reader.GetInt32(8),
+                            Staji = reader.GetInt32(9),
+                            Tarigi_Dabadebis = reader.GetDateTime(10),
+                            Sqesi = reader.GetString(11),
+                            Misamarti_Saxlis = reader.GetString(12),
+                            Teleponi_Saxlis = reader.GetString(13),
+                            Mobiluri = reader.GetString(14),
+                            Email = reader.GetString(15),
+                            UnknownColumn = reader.GetInt32(16)
+                        });
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error retrieving employees: {ex.Message}");
-                }
             }
-
             return employees;
         }
 
-        // Add Employee to Database
-        public async Task<bool> AddEmployeeAsync(Employee employee)
+        public void AddEmployee(Employee employee)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                var query = @"INSERT INTO Employees 
-                              (personalID, gvari, saxeli, ganyofileba, qalaqi, regioni, raioni, xelfasi, asaki, staji, tarigi_dabadebis, sqesi, misamarti_saxlis, teleponi_saxlis, mobiluri, email) 
-                              VALUES 
-                              (@personalID, @gvari, @saxeli, @ganyofileba, @qalaqi, @regioni, @raioni, @xelfasi, @asaki, @staji, @tarigi_dabadebis, @sqesi, @misamarti_saxlis, @teleponi_saxlis, @mobiluri, @email)";
+                connection.Open();
+                string query = "INSERT INTO Employees (Gvari, Saxeli, Ganyofileba, Qalaqi, Regioni, Raioni, Xelfasi, Asaki, Staji, Tarigi_Dabadebis, Sqesi, Misamarti_Saxlis, Teleponi_Saxlis, Mobiluri, Email, UnknownColumn) " +
+                               "VALUES (@Gvari, @Saxeli, @Ganyofileba, @Qalaqi, @Regioni, @Raioni, @Xelfasi, @Asaki, @Staji, @Tarigi_Dabadebis, @Sqesi, @Misamarti_Saxlis, @Teleponi_Saxlis, @Mobiluri, @Email, @UnknownColumn)";
 
-                var command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@personalID", employee.personalID);
-                command.Parameters.AddWithValue("@gvari", employee.gvari);
-                command.Parameters.AddWithValue("@saxeli", employee.saxeli);
-                command.Parameters.AddWithValue("@ganyofileba", employee.ganyofileba);
-                command.Parameters.AddWithValue("@qalaqi", employee.qalaqi);
-                command.Parameters.AddWithValue("@regioni", employee.regioni);
-                command.Parameters.AddWithValue("@raioni", employee.raioni);
-                command.Parameters.AddWithValue("@xelfasi", employee.xelfasi);
-                command.Parameters.AddWithValue("@asaki", employee.asaki);
-                command.Parameters.AddWithValue("@staji", employee.staji);
-                command.Parameters.AddWithValue("@tarigi_dabadebis", employee.tarigi_dabadebis);
-                command.Parameters.AddWithValue("@sqesi", employee.sqesi);
-                command.Parameters.AddWithValue("@misamarti_saxlis", employee.misamarti_saxlis);
-                command.Parameters.AddWithValue("@teleponi_saxlis", employee.teleponi_saxlis);
-                command.Parameters.AddWithValue("@mobiluri", employee.mobiluri);
-                command.Parameters.AddWithValue("@email", employee.email);
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Gvari", employee.Gvari);
+                    command.Parameters.AddWithValue("@Saxeli", employee.Saxeli);
+                    command.Parameters.AddWithValue("@Ganyofileba", employee.Ganyofileba);
+                    command.Parameters.AddWithValue("@Qalaqi", employee.Qalaqi);
+                    command.Parameters.AddWithValue("@Regioni", (object)employee.Regioni ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Raioni", (object)employee.Raioni ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Xelfasi", employee.Xelfasi);
+                    command.Parameters.AddWithValue("@Asaki", employee.Asaki);
+                    command.Parameters.AddWithValue("@Staji", employee.Staji);
+                    command.Parameters.AddWithValue("@Tarigi_Dabadebis", employee.Tarigi_Dabadebis);
+                    command.Parameters.AddWithValue("@Sqesi", employee.Sqesi);
+                    command.Parameters.AddWithValue("@Misamarti_Saxlis", employee.Misamarti_Saxlis);
+                    command.Parameters.AddWithValue("@Teleponi_Saxlis", employee.Teleponi_Saxlis);
+                    command.Parameters.AddWithValue("@Mobiluri", employee.Mobiluri);
+                    command.Parameters.AddWithValue("@Email", employee.Email);
+                    command.Parameters.AddWithValue("@UnknownColumn", employee.UnknownColumn);
 
-                try
-                {
-                    await connection.OpenAsync();
-                    var rowsAffected = await command.ExecuteNonQueryAsync();
-                    return rowsAffected > 0;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error adding employee: {ex.Message}");
-                    return false;
+                    command.ExecuteNonQuery();
                 }
             }
         }

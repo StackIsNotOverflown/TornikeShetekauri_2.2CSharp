@@ -1,28 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-namespace Practice_5
+using System.Collections.Generic;
+
+namespace Practice_5.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/employees")]
     [ApiController]
-    public class EmployeesController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
-        private readonly EmployeeRepository _employeeRepository;
+        private readonly EmployeeRepository _repository;
         private readonly ExcelService _excelService;
 
-        public EmployeesController(EmployeeRepository employeeRepository, ExcelService excelService)
+        public EmployeeController()
         {
-            _employeeRepository = employeeRepository;
-            _excelService = excelService;
+            _repository = new EmployeeRepository();
+            _excelService = new ExcelService();
+        }
+
+        [HttpGet]
+        public ActionResult<List<Employee>> GetEmployees()
+        {
+            return _repository.GetAllEmployees();
+        }
+
+        [HttpPost]
+        public IActionResult AddEmployee([FromBody] Employee employee)
+        {
+            _repository.AddEmployee(employee);
+            return Ok("Employee Added");
         }
 
         [HttpGet("export")]
-        public async Task<IActionResult> ExportEmployeesToExcel()
+        public IActionResult ExportToExcel()
         {
-            var employees = await _employeeRepository.GetEmployeesAsync();
-            var excelData = _excelService.GenerateExcel(employees);
-            var fileName = "Employees.xlsx";
-            return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            var employees = _repository.GetAllEmployees();
+            var excelBytes = _excelService.GenerateExcel(employees);
+            return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
         }
     }
-
 }

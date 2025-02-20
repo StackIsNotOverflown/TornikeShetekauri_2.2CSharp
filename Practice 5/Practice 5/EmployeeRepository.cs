@@ -1,6 +1,6 @@
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace Practice_5
@@ -18,37 +18,52 @@ namespace Practice_5
         {
             var employees = new List<Employee>();
 
+           
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = "SELECT * FROM Employees";
+                var query = "SELECT * FROM Employees"; 
                 var command = new SqlCommand(query, connection);
 
-                await connection.OpenAsync();
-                using (var reader = await command.ExecuteReaderAsync())
+                try
                 {
-                    while (await reader.ReadAsync())
+                    await connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        var employee = new Employee
+                        while (await reader.ReadAsync())
                         {
-                            personalID = reader.GetInt32(0),
-                            gvari = reader.GetString(1),
-                            saxeli = reader.GetString(2),
-                            ganyofileba = reader.GetString(3),
-                            qalaqi = reader.GetString(4),
-                            regioni = reader.GetString(5),
-                            raioni = reader.GetString(6),
-                            xelfasi = reader.GetDecimal(7),
-                            asaki = reader.GetInt32(8),
-                            staji = reader.GetInt32(9),
-                            tarigi_dabadebis = reader.GetString(10),
-                            sqesi = reader.GetString(11),
-                            misamarti_saxlis = reader.GetString(12),
-                            teleponi_saxlis = reader.GetString(13),
-                            mobiluri = reader.GetString(14),
-                            email = reader.GetString(15)
-                        };
-                        employees.Add(employee);
+                            var employee = new Employee
+                            {
+                                personalID = reader.GetInt32(0),
+                                gvari = reader.GetString(1),
+                                saxeli = reader.GetString(2),
+                                ganyofileba = reader.GetString(3),
+                                qalaqi = reader.GetString(4),
+                                regioni = reader.GetString(5),
+                                raioni = reader.GetString(6),
+                                xelfasi = reader.GetDecimal(7),
+                                asaki = reader.GetInt32(8),
+                                staji = reader.GetInt32(9),
+                                tarigi_dabadebis = reader.GetString(10),
+                                sqesi = reader.GetString(11),
+                                misamarti_saxlis = reader.GetString(12),
+                                teleponi_saxlis = reader.GetString(13),
+                                mobiluri = reader.GetString(14),
+                                email = reader.GetString(15)
+                            };
+                            employees.Add(employee);
+                        }
                     }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    // Handle SQL exceptions here (e.g., connection errors)
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unexpected error: {ex.Message}");
+                    // Handle other exceptions here
                 }
             }
 
@@ -56,10 +71,3 @@ namespace Practice_5
         }
     }
 }
-
-
-
-
-
-
-

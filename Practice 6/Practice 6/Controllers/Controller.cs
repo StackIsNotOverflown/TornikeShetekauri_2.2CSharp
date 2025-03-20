@@ -51,20 +51,16 @@ namespace Practice_6.Controllers
         [HttpGet("download")]
         public IActionResult DownloadEventsAsExcel()
         {
-            // Create a new Excel package
             using (var package = new ExcelPackage())
             {
-                // Create a worksheet
                 var worksheet = package.Workbook.Worksheets.Add("Events");
 
-                // Add headers to the worksheet
                 worksheet.Cells[1, 1].Value = "Type";
                 worksheet.Cells[1, 2].Value = "SrcNumber";
                 worksheet.Cells[1, 3].Value = "DstNumber";
                 worksheet.Cells[1, 4].Value = "Time";
                 worksheet.Cells[1, 5].Value = "Duration";
 
-                // Populate the worksheet with event data
                 int row = 2;
                 foreach (var eventItem in _events)
                 {
@@ -76,7 +72,6 @@ namespace Practice_6.Controllers
                     row++;
                 }
 
-                // Set the content type and file name
                 var excelFile = package.GetAsByteArray();
                 return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "events.xlsx");
             }

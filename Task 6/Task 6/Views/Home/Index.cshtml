@@ -1,0 +1,45 @@
+﻿@model List<Task_6.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders Overview";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a href="/Home/ExportToExcel" class="btn btn-primary">Export to Excel</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Amount Owed (GEL)</th>
+            <th>Amount Owed (USD)</th>
+            <th>Amount Paid</th>
+            <th>Amount in Arrears (GEL)</th>
+            <th>Amount in Arrears (USD)</th>
+            <th>Reason</th>
+            <th>Start Date</th>
+            <th>Completion Date</th>
+            <th>Days Remaining</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.XelshekrulebaID</td>
+                <td>@order.GadasaxdeliL</td>
+                <td>@order.GadasaxdeliD</td>
+                <td>@order.ValiL</td>
+                <td>@order.GadaxdiliL</td>
+                <td>@order.GadaxdiliD</td>
+                <td>@order.Reason</td>
+                <td>@order.TarigiDawyebis.ToString("yyyy-MM-dd")</td>
+                <td>@order.TarigiShesrulebis?.ToString("yyyy-MM-dd")</td>
+                <td>@order.DaysRemaining</td>
+            </tr>
+        }
+    </tbody>
+</table>

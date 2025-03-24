@@ -25,24 +25,20 @@ namespace Task_6.Controllers
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand("SELECT * FROM [Orders].[dbo].[Xelshekruleba] WHERE tarigi_shesrulebis IS NULL OR vali_l > 0", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT * FROM [Orders].[dbo].[Xelshekruleba] 
+                      WHERE tarigi_shesrulebis IS NULL 
+                      OR (vali_l > 0 OR vali_d > 0)", conn))
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        DateTime? tarigiShesrulebis = reader.IsDBNull(11) ? (DateTime?)null : reader.GetDateTime(11);
-                        if (!tarigiShesrulebis.HasValue)
-                        {
-                            tarigiShesrulebis = DateTime.Now;
-                        }
+                        DateTime tarigiDawyebis = reader.GetDateTime(10);
+                        DateTime? tarigiDamtavrebis = reader.IsDBNull(12) ? null : reader.GetDateTime(12);
 
-                        int daysRemaining = 0;
-                        if (tarigiShesrulebis.HasValue)
-                        {
-                            DateTime today = DateTime.Now;
-                            DateTime modifiedCompletionDate = new DateTime(today.Year, tarigiShesrulebis.Value.Month, tarigiShesrulebis.Value.Day);
-                            daysRemaining = (modifiedCompletionDate - today).Days;
-                        }
+                        int daysRemaining = tarigiDamtavrebis.HasValue
+                            ? (int)(tarigiDamtavrebis.Value - tarigiDawyebis).TotalDays
+                            : 0;
 
                         orders.Add(new Order
                         {
@@ -55,16 +51,17 @@ namespace Task_6.Controllers
                             GadaxdiliD = reader.IsDBNull(6) ? 0 : reader.GetDouble(6),
                             ValiL = reader.IsDBNull(7) ? 0 : reader.GetDouble(7),
                             ValiD = reader.IsDBNull(8) ? 0 : reader.GetDouble(8),
-                            TarigiDawyebis = reader.GetDateTime(10),
-                            TarigiShesrulebis = reader.IsDBNull(11) ? (DateTime?)null : reader.GetDateTime(11),
-                            Shesruleba = !reader.IsDBNull(12), 
-                            VisiMizezit = reader.IsDBNull(13) ? null : reader.GetString(13),
+                            Kursi = reader.IsDBNull(9) ? 0 : reader.GetDouble(9),
+                            TarigiDawyebis = tarigiDawyebis,
+                            TarigiDamtavrebis = tarigiDamtavrebis,
+                            Shesruleba = !reader.IsDBNull(13),
+                            VisiMizezit = reader.IsDBNull(14) ? null : reader.GetString(14),
                             DaysRemaining = daysRemaining
                         });
                     }
                 }
             }
-            return orders.Count > 0 ? orders : new List<Order>();
+            return orders;
         }
 
         public IActionResult ExportToExcel()
@@ -74,29 +71,37 @@ namespace Task_6.Controllers
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Orders");
-                worksheet.Cells[1, 1].Value = "შეკვეთის ID";
-                worksheet.Cells[1, 2].Value = "დავალიანება (GEL)";
-                worksheet.Cells[1, 3].Value = "დავალიანება (USD)";
-                worksheet.Cells[1, 4].Value = "გადახდილი რაოდენობა";
-                worksheet.Cells[1, 5].Value = "დარჩენილი გადასახდელი (GEL)";
-                worksheet.Cells[1, 6].Value = "დარჩენილი გადასაგდები (USD)";
-                worksheet.Cells[1, 7].Value = "მიზეზი";
-                worksheet.Cells[1, 8].Value = "დაწყების დრო";
-                worksheet.Cells[1, 9].Value = "დამთავრების დრო";
-                worksheet.Cells[1, 10].Value = "დარჩენილი დრო";
+                
+                string[] headers = {
+                    "შეკვეთის ID",
+                    "დავალიანება (GEL)",
+                    "დავალიანება (USD)",
+                    "გადახდილი რაოდენობა",
+                    "დარჩენილი გადასახდელი (GEL)",
+                    "დარჩენილი გადასაგდები (USD)",
+                    "მიზეზი",
+                    "დაწყების დრო",
+                    "დედლაინი",
+                    "დარჩენილი დრო (დღე)"
+                };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = headers[i];
+                }
 
                 int row = 2;
                 foreach (var order in orders)
                 {
                     worksheet.Cells[row, 1].Value = order.XelshekrulebaID;
-                    worksheet.Cells[row, 2].Value = order.GadasaxdeliL;
-                    worksheet.Cells[row, 3].Value = order.GadasaxdeliD;
-                    worksheet.Cells[row, 4].Value = order.ValiL;
-                    worksheet.Cells[row, 5].Value = order.GadaxdiliL;
-                    worksheet.Cells[row, 6].Value = order.GadaxdiliD;
-                    worksheet.Cells[row, 7].Value = order.VisiMizezit ?? "NULL";
+                    worksheet.Cells[row, 2].Value = Math.Round(order.GadasaxdeliL, 2);
+                    worksheet.Cells[row, 3].Value = Math.Round(order.GadasaxdeliD, 2);
+                    worksheet.Cells[row, 4].Value = Math.Round(order.ValiL, 2);
+                    worksheet.Cells[row, 5].Value = Math.Round(order.GadaxdiliL, 2);
+                    worksheet.Cells[row, 6].Value = Math.Round(order.GadaxdiliD, 2);
+                    worksheet.Cells[row, 7].Value = order.Shesruleba ? "კი" : "არა";
                     worksheet.Cells[row, 8].Value = order.TarigiDawyebis.ToString("yyyy-MM-dd");
-                    worksheet.Cells[row, 9].Value = order.TarigiShesrulebis?.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 9].Value = order.TarigiDamtavrebis?.ToString("yyyy-MM-dd") ?? "";
                     worksheet.Cells[row, 10].Value = order.DaysRemaining;
                     row++;
                 }

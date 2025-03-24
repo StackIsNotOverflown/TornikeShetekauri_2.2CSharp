@@ -21,7 +21,7 @@
             <th>დარჩენილი გადასაგდელი (USD)</th>
             <th>მიზეზი</th>
             <th>დაწყების დრო</th>
-            <th>დასრულების დრო</th>
+            <th>დედლაინი</th>
             <th>დარჩენილი დრო (დღე)</th>
         </tr>
     </thead>
@@ -30,14 +30,14 @@
         {
             <tr>
                 <td>@order.XelshekrulebaID</td>
-                <td>@order.GadasaxdeliL</td>
-                <td>@order.GadasaxdeliD</td>
-                <td>@order.ValiL</td>
-                <td>@order.GadaxdiliL</td>
-                <td>@order.GadaxdiliD</td>
-                <td>@(string.IsNullOrEmpty(order.VisiMizezit) ? "N/A" : order.VisiMizezit)</td>
+                <td>@order.GadasaxdeliL.ToString("0.00")</td>
+                <td>@order.GadasaxdeliD.ToString("0.00")</td>
+                <td>@order.ValiL.ToString("0.00")</td>
+                <td>@order.GadaxdiliL.ToString("0.00")</td>
+                <td>@order.GadaxdiliD.ToString("0.00")</td>
+                <td>@(order.Shesruleba ? "კი" : "არა")</td>
                 <td>@order.TarigiDawyebis.ToString("yyyy-MM-dd")</td>
-                <td>@(order.TarigiShesrulebis?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                <td>@(order.TarigiDamtavrebis?.ToString("yyyy-MM-dd") ?? "")</td>
                 <td>@order.DaysRemaining</td>
             </tr>
         }

@@ -397,3 +397,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Practice 2/style/stylesot.css
+/Practice 6/Practice 6/Practice 6.csproj
+/Practice 6/Practice 6/Controllers/Controller.cs
+/Practice 6/Practice 6/Controllers/ExportController.cs
+/Practice 6/Practice 6/Customer.cs
+/Practice 6/Practice 6/Event.cs

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
+using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -68,10 +68,10 @@ namespace Task_6.Controllers
         {
             var orders = GetOrders();
 
-            using (var package = new ExcelPackage())
+            using (var workbook = new XLWorkbook())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Orders");
-                
+                var worksheet = workbook.Worksheets.Add("Orders");
+
                 string[] headers = {
                     "შეკვეთის ID",
                     "დავალიანება (GEL)",
@@ -87,29 +87,31 @@ namespace Task_6.Controllers
 
                 for (int i = 0; i < headers.Length; i++)
                 {
-                    worksheet.Cells[1, i + 1].Value = headers[i];
+                    worksheet.Cell(1, i + 1).Value = headers[i];
                 }
 
                 int row = 2;
                 foreach (var order in orders)
                 {
-                    worksheet.Cells[row, 1].Value = order.XelshekrulebaID;
-                    worksheet.Cells[row, 2].Value = Math.Round(order.GadasaxdeliL, 2);
-                    worksheet.Cells[row, 3].Value = Math.Round(order.GadasaxdeliD, 2);
-                    worksheet.Cells[row, 4].Value = Math.Round(order.ValiL, 2);
-                    worksheet.Cells[row, 5].Value = Math.Round(order.GadaxdiliL, 2);
-                    worksheet.Cells[row, 6].Value = Math.Round(order.GadaxdiliD, 2);
-                    worksheet.Cells[row, 7].Value = order.Shesruleba ? "კი" : "არა";
-                    worksheet.Cells[row, 8].Value = order.TarigiDawyebis.ToString("yyyy-MM-dd");
-                    worksheet.Cells[row, 9].Value = order.TarigiDamtavrebis?.ToString("yyyy-MM-dd") ?? "";
-                    worksheet.Cells[row, 10].Value = order.DaysRemaining;
+                    worksheet.Cell(row, 1).Value = order.XelshekrulebaID;
+                    worksheet.Cell(row, 2).Value = Math.Round(order.GadasaxdeliL, 2);
+                    worksheet.Cell(row, 3).Value = Math.Round(order.GadasaxdeliD, 2);
+                    worksheet.Cell(row, 4).Value = Math.Round(order.ValiL, 2);
+                    worksheet.Cell(row, 5).Value = Math.Round(order.GadaxdiliL, 2);
+                    worksheet.Cell(row, 6).Value = Math.Round(order.GadaxdiliD, 2);
+                    worksheet.Cell(row, 7).Value = order.Shesruleba ? "კი" : "არა";
+                    worksheet.Cell(row, 8).Value = order.TarigiDawyebis.ToString("yyyy-MM-dd");
+                    worksheet.Cell(row, 9).Value = order.TarigiDamtavrebis?.ToString("yyyy-MM-dd") ?? "";
+                    worksheet.Cell(row, 10).Value = order.DaysRemaining;
                     row++;
                 }
 
-                var stream = new MemoryStream();
-                package.SaveAs(stream);
-                stream.Position = 0;
-                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Orders.xlsx");
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Orders.xlsx");
+                }
             }
         }
     }

@@ -1,48 +1,90 @@
+using Game.Models;
+
 using Microsoft.AspNetCore.Mvc;
-using GAME.Models;
 
 namespace HigherLowerGame.Controllers
 {
     public class GameController : Controller
     {
-        private static int _target = new Random().Next(1, 101);
-        private static int _count = 0;
-
-        [HttpGet]
-        public IActionResult Index()
+        private static List<Card> AllCards = new List<Card>
         {
-            return View(new GameModel
+new Card { Title = "Keygen Church", AVG_Search = 22200, Image_URI = "https://upload.wikimedia.org/wikipedia/commons/d/d0/Keygen_Church_live_2017.jpg" },
+    new Card { Title = "Gulab Jamun", AVG_Search = 2000, Image_URI = "https://upload.wikimedia.org/wikipedia/commons/0/07/Gulab_Jamun.jpg" },
+    new Card { Title = "Lionel Messi", AVG_Search = 500000, Image_URI = "https://upload.wikimedia.org/wikipedia/commons/8/88/Lionel_Messi_20180626.jpg" },
+    new Card { Title = "Minecraft", AVG_Search = 1000000, Image_URI = "https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png" },
+    new Card { Title = "Instagram", AVG_Search = 900000, Image_URI = "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" },
+        };
+
+        private static Card CurrentCard;
+        private static Card NextCard;
+        private static int Score = 0;
+
+        public IActionResult Game()
+        {
+            if (CurrentCard == null)
             {
-                Message = "Guess a number between 1 and 100!"
-            });
+                Random rnd = new Random();
+                CurrentCard = AllCards[rnd.Next(AllCards.Count)];
+                NextCard = AllCards[rnd.Next(AllCards.Count)];
+
+                while (NextCard.Title == CurrentCard.Title)
+                    NextCard = AllCards[rnd.Next(AllCards.Count)];
+            }
+
+            ViewBag.Current = CurrentCard;
+            ViewBag.Next = NextCard;
+            ViewBag.Score = Score;
+
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Index(GameModel model)
+        public IActionResult Check(string guess)
         {
-            _count++;
+            bool isCorrect = false;
 
-            if (!model.Guess.HasValue)
+            if ((guess == "Higher" && NextCard.AVG_Search >= CurrentCard.AVG_Search) ||
+                (guess == "Lower" && NextCard.AVG_Search <= CurrentCard.AVG_Search))
             {
-                model.Message = "Please enter a number.";
+                isCorrect = true;
             }
-            else if (model.Guess < _target)
+
+            if (isCorrect)
             {
-                model.Message = "Too low!";
-            }
-            else if (model.Guess > _target)
-            {
-                model.Message = "Too high!";
+                Score++;
+                CurrentCard = NextCard;
+                Random rnd = new Random();
+                NextCard = AllCards[rnd.Next(AllCards.Count)];
+                while (NextCard.Title == CurrentCard.Title)
+                    NextCard = AllCards[rnd.Next(AllCards.Count)];
+
+                return RedirectToAction("Game");
             }
             else
             {
-                model.Message = $"Correct! You guessed it in {_count} attempts.";
-                _target = new Random().Next(1, 101);
-                _count = 0;
+                int finalScore = Score;
+                ResetGame();
+                ViewBag.FinalScore = finalScore;
+                return View("GameOver");
             }
+        }
 
-            model.GuessCount = _count;
-            return View(model);
+        public IActionResult Restart()
+        {
+            ResetGame();
+            return RedirectToAction("Game");
+        }
+
+        private void ResetGame()
+        {
+            CurrentCard = null;
+            NextCard = null;
+            Score = 0;
+        }
+
+        public IActionResult GameOver()
+        {
+            return View();
         }
     }
 }

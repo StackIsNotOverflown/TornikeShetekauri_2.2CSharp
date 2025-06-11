@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Higher or Lower Game";
+    var current = ViewBag.Current;
+    var next = ViewBag.Next;
+    int score = ViewBag.Score;
+}
+
+<h1>Higher or Lower!</h1>
+
+<h2>Score: @score</h2>
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 50px; margin-bottom: 30px;">
+    <div style="text-align: center;">
+        <h3>@current.Title</h3>
+        <img src="@current.Image_URI" alt="@current.Title" style="width: 200px; height: 200px; object-fit: cover;">
+        <p>Average searches: @current.AVG_Search</p>
+    </div>
+
+    <div style="text-align: center;">
+        <h3>VS</h3>
+    </div>
+
+    <div style="text-align: center;">
+        <h3>@next.Title</h3>
+        <img src="@next.Image_URI" alt="@next.Title" style="width: 200px; height: 200px; object-fit: cover;">
+        <form asp-action="Check" method="post" style="margin-top: 10px;">
+            <button type="submit" name="guess" value="Higher">Higher</button>
+            <button type="submit" name="guess" value="Lower">Lower</button>
+        </form>
+    </div>
+</div>

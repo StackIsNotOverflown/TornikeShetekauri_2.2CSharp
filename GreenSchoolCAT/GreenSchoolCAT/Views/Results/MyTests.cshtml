@@ -1,0 +1,34 @@
+﻿@model IEnumerable<GreenSchoolCAT.Models.Test>
+
+@{
+    ViewData["Title"] = "ჩემი ტესტები";
+}
+
+<h2>ჩემი ტესტები</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>სახელი</th>
+            <th>პაროლი</th>
+            <th>თარიღი</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var test in Model)
+        {
+            <tr>
+                <td>@test.Name</td>
+                <td>@test.Password</td>
+                <td>@test.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <form asp-action="Delete" method="post" asp-controller="Test">
+                        <input type="hidden" name="id" value="@test.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('დარწმუნებული ხარ?')">წაშლა</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

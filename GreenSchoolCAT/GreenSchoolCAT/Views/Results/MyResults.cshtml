@@ -1,0 +1,25 @@
+﻿@model IEnumerable<GreenSchoolCAT.Controllers.MyResultsViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ტესტის სახელი</th>
+            <th>მასწავლებელი</th>
+            <th>ქულა</th>
+            <th>θ მაჩვენებელი</th>
+            <th>თარიღი</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.TestName</td>
+                <td>@r.TeacherName</td>
+                <td>@r.Score</td>
+                <td>@r.Theta.ToString("0.00")</td>
+                <td>@r.DateTaken.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

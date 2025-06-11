@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "შედეგი";
+}
+
+<div class="text-center mt-5">
+    <h2>ტესტი დასრულდა!</h2>
+    <p><strong>ქულა:</strong> @ViewBag.Score</p>
+    <p><strong>უნარიანობა (θ):</strong> @String.Format("{0:0.00}", ViewBag.Theta)</p>
+    <a asp-controller="Home" asp-action="StudentHome" class="btn btn-success mt-3">დაბრუნება მთავარზე</a>
+</div>

@@ -1,0 +1,21 @@
+﻿<script>
+    function saveSettings() {
+        const darkMode = document.getElementById('darkModeSwitch').checked;
+        const fontSize = document.getElementById('fontSizeSelect').value;
+
+        localStorage.setItem('darkMode', darkMode);
+        localStorage.setItem('fontSize', fontSize);
+
+        
+        document.body.classList.toggle('dark-mode', darkMode);
+        alert('პარამეტრები შენახულია!');
+    }
+
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('darkModeSwitch').checked =
+            localStorage.getItem('darkMode') === 'true';
+        document.getElementById('fontSizeSelect').value =
+            localStorage.getItem('fontSize') || 'medium';
+    });
+</script>

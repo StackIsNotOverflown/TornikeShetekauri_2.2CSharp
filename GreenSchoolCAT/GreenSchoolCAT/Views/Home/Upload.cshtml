@@ -1,0 +1,33 @@
+﻿@model GreenSchoolCAT.Models.TestUploadViewModel
+
+@{
+    ViewData["Title"] = "ტესტის ატვირთვა";
+}
+
+<h2 class="text-center text-primary">ტესტის ატვირთვა</h2>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data" class="mt-4">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="text" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ExcelFile" class="form-label"></label>
+        <input asp-for="ExcelFile" type="file" class="form-control" />
+        <span asp-validation-for="ExcelFile" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">ატვირთვა</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GreenSchoolCAT.Models.Test>
+
+@{
+    ViewData["Title"] = "ტესტები";
+}
+
+<h2>ტესტები</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>სახელი</th>
+            <th>მასწავლებელი</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var test in Model)
+        {
+            <tr>
+                <td>@(test.Name ?? "უცნობი სახელი")</td>
+                <td>@(test.Teacher?.FullName ?? "უცნობი მასწავლებელი")</td>
+                <td>
+                    <a asp-action="EnterPasscode" asp-route-testId="@test.GuidId" class="btn btn-primary btn-sm">შესვლა</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,41 @@
+﻿@model GreenSchoolCAT.Models.Question
+@{
+    ViewData["Title"] = "კითხვა";
+}
+
+<div class="container mt-5">
+    <h4>@Model.Text</h4>
+
+    <form asp-action="Submit" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="score" value="@ViewBag.Score" />
+        <input type="hidden" name="theta" value="@ViewBag.Theta" />
+        <input type="hidden" name="asked" value="@ViewBag.Asked" />
+        <input type="hidden" name="testId" value="@ViewBag.TestId" />
+
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionA" required />
+            <label class="form-check-label">@Model.OptionA</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionB" required />
+            <label class="form-check-label">@Model.OptionB</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionC" required />
+            <label class="form-check-label">@Model.OptionC</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionD" required />
+            <label class="form-check-label">@Model.OptionD</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">შემდეგი კითხვა</button>
+    </form>
+
+    <p class="mt-3">
+        <strong>( ეს ორი სატესტოა რომ გზაში ჩანდეს ცვლილებები) ქულა:</strong> @ViewBag.Score
+        • <strong>θ:</strong> @String.Format("{0:0.00}", ViewBag.Theta)
+    </p>
+   
+</div>

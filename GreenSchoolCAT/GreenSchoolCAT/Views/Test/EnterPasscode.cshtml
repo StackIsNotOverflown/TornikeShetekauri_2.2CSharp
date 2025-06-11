@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "პაროლის შეყვანა";
+}
+
+<h2>შეიყვანეთ ტესტის პაროლი</h2>
+
+<form asp-action="EnterPasscode" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="testId" value="@ViewBag.TestId" />
+
+    <div class="mb-3">
+        <label for="passcode" class="form-label">პაროლი</label>
+        <input type="text" name="passcode" class="form-control" required />
+        <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">დაწყება</button>
+</form>

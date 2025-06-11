@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "ტესტის დაწყება";
+    var testId = (Guid)Model;
+}
+<h2 class="text-center text-success">ტესტის დაწყება</h2>
+
+<div id="questionArea" class="mt-4"></div>
+
+@section Scripts {
+    <script>
+        let score = 0;
+        let theta = 0;
+        let asked = "";
+        let testId = '@testId';
+
+        function loadNextQuestion() {
+            fetch('/Test/LoadQuestion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ testId, score, theta, asked })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.finished) {
+                    fetch('/Test/SaveResult', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ score, theta, testId })
+                    }).then(() => {
+                        document.getElementById('questionArea').innerHTML = `
+                            <h4>ტესტი დასრულდა</h4>
+                            <p>შეფასება: ${score} ქულა</p>
+                            <p>უნარიანობის შეფასება (θ): ${theta.toFixed(2)}</p>`;
+                    });
+                    return;
+                }
+
+                asked = data.asked;
+                const html = `
+                    <form onsubmit="submitAnswer(event, '${data.id}')">
+                        <h5>${data.text}</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="answer" value="${data.a}" required>
+                            <label class="form-check-label">${data.a}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="answer" value="${data.b}">
+                            <label class="form-check-label">${data.b}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="answer" value="${data.c}">
+                            <label class="form-check-label">${data.c}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="answer" value="${data.d}">
+                            <label class="form-check-label">${data.d}</label>
+                        </div>
+                        <button class="btn btn-success mt-3" type="submit">შემდეგი</button>
+                    </form>`;
+                document.getElementById('questionArea').innerHTML = html;
+            });
+        }
+
+        function submitAnswer(event, id) {
+            event.preventDefault();
+            const answer = document.querySelector('input[name="answer"]:checked').value;
+
+            fetch('/Test/SubmitAnswer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, answer, score, theta })
+            })
+            .then(res => res.json())
+            .then(data => {
+                score = data.score;
+                theta = data.theta;
+                loadNextQuestion();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNextQuestion);
+    </script>
+}

@@ -12,7 +12,6 @@ namespace GreenSchoolCAT.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly ICatService _cat;
-        private const int MaxQuestions = 10;
 
         public TestController(ApplicationDbContext db, ICatService cat)
         {
@@ -53,7 +52,7 @@ namespace GreenSchoolCAT.Controllers
             var test = await _db.Tests.FirstOrDefaultAsync(t => t.GuidId == testId);
             if (test == null || test.Password != passcode)
             {
-                ModelState.AddModelError("", "პაროლი არასწორია ან ტესტი ვერ მოიძებნა.");
+                ModelState.AddModelError("", "Incorrect password or test not found.");
                 ViewBag.TestId = testId;
                 return View();
             }
@@ -73,6 +72,9 @@ namespace GreenSchoolCAT.Controllers
                 return NotFound();
             }
 
+            // Store total questions count in TempData to pass to Question action
+            TempData["TotalQuestions"] = test.Questions.Count;
+
             return RedirectToAction("Question", new
             {
                 score = 0,
@@ -86,7 +88,14 @@ namespace GreenSchoolCAT.Controllers
         [HttpGet]
         public IActionResult Question(Guid testId, int score, double theta, string asked)
         {
-            Response.Headers["Cache-Control"] = "no-store, no-cache";
+          
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
+            // Get total questions count from database
+            var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
+            ViewBag.TotalQuestions = totalQuestions;
 
             var askedList = string.IsNullOrEmpty(asked)
                 ? new List<Guid>()
@@ -96,7 +105,7 @@ namespace GreenSchoolCAT.Controllers
                 .Where(q => q.TestId == testId && !askedList.Contains(q.Id))
                 .ToList();
 
-            if (!pool.Any() || askedList.Count >= MaxQuestions)
+            if (!pool.Any() || askedList.Count >= totalQuestions)
             {
                 return RedirectToAction("Result", new { score, theta, testId });
             }
@@ -117,21 +126,36 @@ namespace GreenSchoolCAT.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Submit(Guid id, string answer, int score, double theta, string asked, Guid testId)
         {
+           
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
             var question = _db.Questions.FirstOrDefault(q => q.Id == id);
             if (question == null)
             {
                 return NotFound();
             }
 
-            bool isCorrect = question.CorrectAnswer == answer;
+           
+            var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
+            ViewBag.TotalQuestions = totalQuestions;
+
+           
+            bool isCorrect = string.Equals(
+                question.CorrectAnswer?.Trim(),
+                answer?.Trim(),
+                StringComparison.OrdinalIgnoreCase);
+
+            
             if (isCorrect)
             {
                 score++;
             }
 
+            
             theta = _cat.UpdateTheta(theta, question, isCorrect);
 
-            Response.Headers["Cache-Control"] = "no-store, max-age=0";
             return RedirectToAction("Question", new
             {
                 testId,
@@ -168,12 +192,12 @@ namespace GreenSchoolCAT.Controllers
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                TempData["SuccessMessage"] = "ტესტი წარმატებით წაიშალა";
+                TempData["SuccessMessage"] = "Test deleted successfully";
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                TempData["ErrorMessage"] = $"შეცდომა ტესტის წაშლისას: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error deleting test: {ex.Message}";
             }
 
             return RedirectToAction(nameof(AllTests));
@@ -197,11 +221,20 @@ namespace GreenSchoolCAT.Controllers
         [HttpGet]
         public IActionResult Result(int score, double theta, Guid testId)
         {
+           
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
             }
+
+            
+            var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
+            ViewBag.TotalQuestions = totalQuestions;
 
             _db.TestResults.Add(new TestResult
             {

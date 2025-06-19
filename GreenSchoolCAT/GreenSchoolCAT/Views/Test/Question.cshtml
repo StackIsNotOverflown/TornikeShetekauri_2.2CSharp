@@ -1,41 +1,113 @@
 ﻿@model GreenSchoolCAT.Models.Question
 @{
-    ViewData["Title"] = "კითხვა";
+    ViewData["Title"] = "Question";
+    int askedCount = ViewBag.Asked?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Length ?? 0;
+    int totalQuestions = ViewBag.TotalQuestions ?? 50; 
+    int progressPercent = totalQuestions > 0 ? (int)Math.Round((double)askedCount / totalQuestions * 100) : 0;
 }
 
-<div class="container mt-5">
-    <h4>@Model.Text</h4>
-
-    <form asp-action="Submit" method="post">
-        <input type="hidden" name="id" value="@Model.Id" />
-        <input type="hidden" name="score" value="@ViewBag.Score" />
-        <input type="hidden" name="theta" value="@ViewBag.Theta" />
-        <input type="hidden" name="asked" value="@ViewBag.Asked" />
-        <input type="hidden" name="testId" value="@ViewBag.TestId" />
-
-        <div class="form-check mt-2">
-            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionA" required />
-            <label class="form-check-label">@Model.OptionA</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionB" required />
-            <label class="form-check-label">@Model.OptionB</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionC" required />
-            <label class="form-check-label">@Model.OptionC</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer" value="@Model.OptionD" required />
-            <label class="form-check-label">@Model.OptionD</label>
+<div class="container mt-4">
+    <div class="card shadow-sm border-success">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">@Model.Text</h4>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">შემდეგი კითხვა</button>
-    </form>
+        <div class="card-body">
+            <form asp-action="Submit" method="post" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="score" value="@ViewBag.Score" />
+                <input type="hidden" name="theta" value="@ViewBag.Theta.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="asked" value="@ViewBag.Asked" />
+                <input type="hidden" name="testId" value="@ViewBag.TestId" />
 
-    <p class="mt-3">
-        <strong>( ეს ორი სატესტოა რომ გზაში ჩანდეს ცვლილებები) ქულა:</strong> @ViewBag.Score
-        • <strong>θ:</strong> @String.Format("{0:0.00}", ViewBag.Theta)
-    </p>
-   
+                <div class="list-group list-group-flush mb-4 question-options">
+                    <label class="list-group-item list-group-item-action list-group-item-success">
+                        <input class="form-check-input me-2" type="radio" name="answer" value="OptionA" required>
+                        <span class="fw-medium">A)</span> @Model.OptionA
+                    </label>
+                    <label class="list-group-item list-group-item-action list-group-item-success">
+                        <input class="form-check-input me-2" type="radio" name="answer" value="OptionB" required>
+                        <span class="fw-medium">B)</span> @Model.OptionB
+                    </label>
+                    <label class="list-group-item list-group-item-action list-group-item-success">
+                        <input class="form-check-input me-2" type="radio" name="answer" value="OptionC" required>
+                        <span class="fw-medium">C)</span> @Model.OptionC
+                    </label>
+                    <label class="list-group-item list-group-item-action list-group-item-success">
+                        <input class="form-check-input me-2" type="radio" name="answer" value="OptionD" required>
+                        <span class="fw-medium">D)</span> @Model.OptionD
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="progress-track">
+                        <div class="progress" style="height: 12px; border-radius: 6px; width: 200px; background-color: #e8f5e9;">
+                            <div class="progress-bar bg-success"
+                                 id="animatedProgressBar"
+                                 role="progressbar"
+                                 style="width: 0%; transition: width 0.5s ease;"
+                                 aria-valuenow="@askedCount"
+                                 aria-valuemin="0"
+                                 aria-valuemax="@totalQuestions"></div>
+                        </div>
+                        <small class="text-muted d-block mt-1">@askedCount/@totalQuestions</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-success px-4 py-2">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Next Question
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="badge bg-success text-white">Score: @ViewBag.Score</span>
+                    <span class="badge bg-success text-white ms-2" style="opacity: 0.8;">θ: @String.Format("{0:0.00}", ViewBag.Theta)</span>
+                </div>
+                <div>
+                    <span class="text-muted">Progress: @progressPercent%</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          
+            const progressBar = document.getElementById('animatedProgressBar');
+            const targetWidth = @progressPercent;
+
+            setTimeout(() => {
+                progressBar.style.width = targetWidth + '%';
+                progressBar.setAttribute('aria-valuenow', @askedCount);
+
+                
+                if (targetWidth >= 100) {
+                    progressBar.classList.add('progress-bar-striped');
+                    progressBar.classList.add('progress-bar-animated');
+                }
+            }, 200);
+
+           
+            document.querySelectorAll('.question-options .list-group-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!e.target.matches('input[type="radio"]')) {
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+
+                      
+                        document.querySelectorAll('.question-options .list-group-item').forEach(i => {
+                            i.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -72,7 +72,6 @@ namespace GreenSchoolCAT.Controllers
                 return NotFound();
             }
 
-            
             TempData["TotalQuestions"] = test.Questions.Count;
 
             return RedirectToAction("Question", new
@@ -88,7 +87,6 @@ namespace GreenSchoolCAT.Controllers
         [HttpGet]
         public IActionResult Question(Guid testId, int score, double theta, string asked)
         {
-          
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
@@ -125,7 +123,6 @@ namespace GreenSchoolCAT.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Submit(Guid id, string answer, int score, double theta, string asked, Guid testId)
         {
-           
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
@@ -136,23 +133,19 @@ namespace GreenSchoolCAT.Controllers
                 return NotFound();
             }
 
-           
             var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
             ViewBag.TotalQuestions = totalQuestions;
 
-           
             bool isCorrect = string.Equals(
                 question.CorrectAnswer?.Trim(),
                 answer?.Trim(),
                 StringComparison.OrdinalIgnoreCase);
 
-            
             if (isCorrect)
             {
                 score++;
             }
 
-            
             theta = _cat.UpdateTheta(theta, question, isCorrect);
 
             return RedirectToAction("Question", new
@@ -165,62 +158,75 @@ namespace GreenSchoolCAT.Controllers
         }
 
         [Authorize(Roles = "Teacher")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteTest(Guid testId)
-        {
-            var teacherId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            var test = await _db.Tests
-                .Include(t => t.Questions)
-                .Include(t => t.Results)
-                .FirstOrDefaultAsync(t => t.GuidId == testId && t.TeacherId == teacherId);
-
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            using var transaction = _db.Database.BeginTransaction();
-            try
-            {
-                _db.TestResults.RemoveRange(test.Results);
-                _db.Questions.RemoveRange(test.Questions);
-                _db.Tests.Remove(test);
-
-                await _db.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                TempData["SuccessMessage"] = "Test deleted successfully";
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                TempData["ErrorMessage"] = $"Error deleting test: {ex.Message}";
-            }
-
-            return RedirectToAction(nameof(AllTests));
-        }
-
-        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> AllTests()
         {
             var teacherId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var tests = await _db.Tests
                 .Where(t => t.TeacherId == teacherId)
+                .Include(t => t.Teacher)
                 .Include(t => t.Questions)
                 .Include(t => t.Results)
+                .Select(t => new TestViewModel
+                {
+                    GuidId = t.GuidId,
+                    Name = t.Name,
+                    CreatedAt = t.CreatedAt,
+                    TeacherName = t.Teacher.FullName,
+                    QuestionCount = t.Questions.Count,
+                    ResultCount = t.Results.Count
+                })
                 .ToListAsync();
 
             return View(tests);
+        }
+
+        [Authorize(Roles = "Teacher")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTest(Guid id)
+        {
+            var teacherId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var test = await _db.Tests
+                .Include(t => t.Questions)
+                .Include(t => t.Results)
+                .FirstOrDefaultAsync(t => t.GuidId == id && t.TeacherId == teacherId);
+
+            if (test == null)
+            {
+                TempData["ErrorMessage"] = "ტესტი ვერ მოიძებნა ან არ გაქვთ წაშლის უფლება";
+                return RedirectToAction(nameof(AllTests));
+            }
+
+            using var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                if (test.Questions != null)
+                {
+                    _db.Questions.RemoveRange(test.Questions);
+                }
+
+                _db.Tests.Remove(test);
+
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                TempData["SuccessMessage"] = $"ტესტი '{test.Name}' და მასთან დაკავშირებული {test.Questions?.Count ?? 0} კითხვა წარმატებით წაიშალა";
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                TempData["ErrorMessage"] = $"შეცდომა ტესტის წაშლისას: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(AllTests));
         }
 
         [Authorize(Roles = "Student")]
         [HttpGet]
         public IActionResult Result(int score, double theta, Guid testId)
         {
-           
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
@@ -231,7 +237,6 @@ namespace GreenSchoolCAT.Controllers
                 return Unauthorized();
             }
 
-            
             var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
             ViewBag.TotalQuestions = totalQuestions;
 

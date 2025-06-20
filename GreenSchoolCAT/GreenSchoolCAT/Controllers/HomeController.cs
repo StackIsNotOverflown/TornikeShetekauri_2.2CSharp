@@ -25,9 +25,7 @@ namespace GreenSchoolCAT.Controllers
         {
             return View(new TestUploadViewModel());
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Upload(TestUploadViewModel model)
         {
             if (!ModelState.IsValid || model.ExcelFile == null || model.ExcelFile.Length == 0)

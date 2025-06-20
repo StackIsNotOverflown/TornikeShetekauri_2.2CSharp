@@ -1,49 +1,68 @@
-﻿@model IEnumerable<GreenSchoolCAT.Models.Test>
-
+﻿@model IEnumerable<GreenSchoolCAT.Models.TestViewModel>
 @{
     ViewData["Title"] = "ჩემი ტესტები";
 }
 
-<h2>ჩემი ტესტები</h2>
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>ტესტის სახელი</th>
-            <th>კითხვების რაოდენობა</th>
-            <th>შედეგების რაოდენობა</th>
-            <th>პაროლი</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var test in Model)
-        {
+    <table class="table table-hover">
+        <thead class="table-light">
             <tr>
-                <td>@test.Name</td>
-                <td>@test.Questions.Count</td>
-                <td>@test.Results.Count</td>
-                <td>@test.Password</td>
-                <td class="text-end">
-                    <form asp-action="DeleteTest" method="post" class="d-inline">
-                        <input type="hidden" name="testId" value="@test.GuidId" />
-                        <button type="submit"
-                                class="btn btn-outline-danger btn-sm"
-                                onclick="return confirm('დარწმუნებული ხართ, რომ გსურთ ტესტის \" @test.Name\" წაშლა?')">
-                            წაშლა
-                        </button>
-                    </form>
-                </td>
+                <th>ტესტის სახელი</th>
+                <th>მასწავლებელი</th>
+                <th>კითხვები</th>
+                <th>შედეგები</th>
+                <th>მოქმედებები</th>
+                <th>წაშლა</th> 
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var test in Model)
+            {
+                <tr>
+                    <td>@test.Name</td>
+                    <td>@test.TeacherName</td>
+                    <td>@test.QuestionCount</td>
+                    <td>@test.ResultCount</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@test.GuidId" class="btn btn-sm btn-primary">
+                            <i class="bi bi-eye"></i> ნახვა
+                        </a>
+                    </td>
+                    <td>
+                        <form asp-action="DeleteTest" asp-route-id="@test.GuidId" method="post" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ ამ ტესტის წაშლა? ყველა დაკავშირებული კითხვაც წაიშლება!');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i> წაშლა
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                new bootstrap.Alert(alert).close();
+            });
+        }, 5000);
+    </script>
+}

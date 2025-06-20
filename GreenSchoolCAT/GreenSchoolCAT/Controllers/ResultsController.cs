@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace GreenSchoolCAT.Controllers
+namespace GreenSchoolCAT.Models
 {
     [Authorize]
     public class ResultsController : Controller

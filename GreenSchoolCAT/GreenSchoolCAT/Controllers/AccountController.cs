@@ -59,30 +59,9 @@ namespace GreenSchoolCAT.Controllers
             );
 
             return user.Role == "Teacher"
-                ? RedirectToAction("TeacherHome", "Home")
-                : RedirectToAction("StudentHome", "Home");
-        }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Register(string fullName, string password, string role)
-        {
-            _db.Users.Add(new User
-            {
-                FullName = fullName,
-                Password = password,
-                Role = role
-            });
-
-            _db.SaveChanges();
-            return RedirectToAction("Login");
-        }
+              ? RedirectToAction("TeacherHome", "Home")
+              : RedirectToAction("StudentHome", "Home");
+        }       
 
         [HttpPost]
         [ValidateAntiForgeryToken]

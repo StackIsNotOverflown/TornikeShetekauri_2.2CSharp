@@ -35,7 +35,7 @@ namespace GreenSchoolCAT.Models
         public string OptionD { get; set; }
 
         [Required]
-        [MaxLength(7)]// როდესაც კონროლერს დავააფდეითებ, ეს 1-ად უნდა გადიწიოს!
+        [MaxLength(7)]// როდესაც კონროლერს დავააფდეითებ, ეს 1-ად უნდა გადიწიოს!// ახლა ამის შეცვლა მეშინია
         
         public string CorrectAnswer { get; set; }
         [Required]

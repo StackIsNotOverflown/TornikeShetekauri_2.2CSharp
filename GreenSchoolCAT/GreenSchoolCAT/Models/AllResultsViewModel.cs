@@ -1,4 +1,4 @@
-﻿namespace GreenSchoolCAT.Controllers
+﻿namespace GreenSchoolCAT.Models
 {
     internal class AllResultsViewModel
     {

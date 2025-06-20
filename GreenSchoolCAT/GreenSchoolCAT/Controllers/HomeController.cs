@@ -20,11 +20,7 @@ namespace GreenSchoolCAT.Controllers
             _db = db;
         }
 
-        [Authorize(Roles = "Teacher")]
-        public IActionResult Upload()
-        {
-            return View(new TestUploadViewModel());
-        }
+    
         
         public async Task<IActionResult> Upload(TestUploadViewModel model)
         {

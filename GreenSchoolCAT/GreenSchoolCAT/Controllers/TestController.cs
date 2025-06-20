@@ -72,7 +72,7 @@ namespace GreenSchoolCAT.Controllers
                 return NotFound();
             }
 
-            // Store total questions count in TempData to pass to Question action
+            
             TempData["TotalQuestions"] = test.Questions.Count;
 
             return RedirectToAction("Question", new
@@ -93,7 +93,6 @@ namespace GreenSchoolCAT.Controllers
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
 
-            // Get total questions count from database
             var totalQuestions = _db.Questions.Count(q => q.TestId == testId);
             ViewBag.TotalQuestions = totalQuestions;
 

@@ -40,7 +40,7 @@ namespace GreenSchoolCAT.Controllers
 
             var test = new Test
             {
-                Name = "Uploaded Test",
+                Name = model.Name,
                 Password = model.Password,
                 TeacherId = teacherId,
                 CreatedAt = DateTime.UtcNow

@@ -1,6 +1,15 @@
 ﻿@using GreenSchoolCAT.Models
 @model IEnumerable<MyResultsViewModel>
 
+<div class="search-container mb-3">
+    <div class="input-group">
+        <span class="input-group-text bg-success text-white">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" id="searchInput" class="search-bar" placeholder="ტესტის ძებნა..." autocomplete="off">
+    </div>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -11,11 +20,11 @@
             <th>თარიღი</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="resultsTable">
         @foreach (var r in Model)
         {
-            <tr>
-                <td>@r.TestName</td>
+            <tr class="test-row">
+                <td class="test-name">@r.TestName</td>
                 <td>@r.TeacherName</td>
                 <td>@r.Score</td>
                 <td>@r.Theta.ToString("0.00")</td>
@@ -24,3 +33,40 @@
         }
     </tbody>
 </table>
+
+<script>
+    function initializeTestSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const testRows = document.querySelectorAll('.test-row');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            let hasResults = false;
+
+            testRows.forEach(row => {
+                const testName = row.querySelector('.test-name').textContent.toLowerCase();
+                if (testName.includes(searchTerm) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (!hasResults && searchTerm !== '') {
+                if (!noResultsRow) {
+                    const tbody = document.getElementById('resultsTable');
+                    const tr = document.createElement('tr');
+                    tr.id = 'noResultsRow';
+                    tr.innerHTML = '<td colspan="5" class="no-results">ვერ მოიძებნა</td>';
+                    tbody.appendChild(tr);
+                }
+            } else if (noResultsRow) {
+                noResultsRow.remove();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeTestSearch);
+</script>

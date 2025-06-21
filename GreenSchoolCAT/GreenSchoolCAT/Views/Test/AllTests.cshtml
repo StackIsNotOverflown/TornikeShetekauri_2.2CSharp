@@ -19,6 +19,15 @@
         </div>
     }
 
+    <div class="search-container mb-3">
+        <div class="input-group">
+            <span class="input-group-text bg-success text-white">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" id="searchInput" class="search-bar" placeholder="ტესტის ძებნა..." autocomplete="off">
+        </div>
+    </div>
+
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
@@ -26,23 +35,17 @@
                 <th>მასწავლებელი</th>
                 <th>კითხვები</th>
                 <th>შედეგები</th>
-                <th>მოქმედებები</th>
-                <th>წაშლა</th> 
+                <th>წაშლა</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="resultsTable">
             @foreach (var test in Model)
             {
-                <tr>
-                    <td>@test.Name</td>
+                <tr class="test-row">
+                    <td class="test-name">@test.Name</td>
                     <td>@test.TeacherName</td>
                     <td>@test.QuestionCount</td>
                     <td>@test.ResultCount</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@test.GuidId" class="btn btn-sm btn-primary">
-                            <i class="bi bi-eye"></i> ნახვა
-                        </a>
-                    </td>
                     <td>
                         <form asp-action="DeleteTest" asp-route-id="@test.GuidId" method="post" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ ამ ტესტის წაშლა? ყველა დაკავშირებული კითხვაც წაიშლება!');">
                             @Html.AntiForgeryToken()
@@ -59,10 +62,47 @@
 
 @section Scripts {
     <script>
-        setTimeout(() => {
-            document.querySelectorAll('.alert').forEach(alert => {
-                new bootstrap.Alert(alert).close();
+        function initializeTestSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const testRows = document.querySelectorAll('.test-row');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasResults = false;
+
+                testRows.forEach(row => {
+                    const testName = row.querySelector('.test-name').textContent.toLowerCase();
+                    if (testName.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasResults = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                const noResultsRow = document.getElementById('noResultsRow');
+                if (!hasResults && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        const tbody = document.getElementById('resultsTable');
+                        const tr = document.createElement('tr');
+                        tr.id = 'noResultsRow';
+                        tr.innerHTML = '<td colspan="5" class="no-results">ვერ მოიძებნა</td>';
+                        tbody.appendChild(tr);
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.remove();
+                }
             });
-        }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTestSearch();
+
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    new bootstrap.Alert(alert).close();
+                });
+            }, 5000);
+        });
     </script>
 }

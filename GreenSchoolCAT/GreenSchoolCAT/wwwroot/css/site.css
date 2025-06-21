@@ -52,35 +52,74 @@ body.dark-mode {
         color: #f0f0f0;
         border-color: #444;
     }
-      .question-options .list-group-item {
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
 
-            .question-options .list-group-item:hover {
-                border-left: 3px solid #2E7D32;
-                transform: translateX(3px);
-            }
+.question-options .list-group-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
 
-            .question-options .list-group-item.active {
-                background-color: #2E7D32 !important;
-                border-left: 3px solid #1B5E20;
-            }
+    .question-options .list-group-item:hover {
+        border-left: 3px solid #2E7D32;
+        transform: translateX(3px);
+    }
 
-        .progress-bar-animated {
-            animation: progress-pulse 1.5s infinite;
-        }
+    .question-options .list-group-item.active {
+        background-color: #2E7D32 !important;
+        border-left: 3px solid #1B5E20;
+    }
 
-        @@keyframes progress-pulse {
-            0% {
-                opacity: 1;
-            }
+.progress-bar-animated {
+    animation: progress-pulse 1.5s infinite;
+}
 
-            50% {
-                opacity: 0.8;
-            }
+@keyframes progress-pulse {
+    0% {
+        opacity: 1;
+    }
 
-            100% {
-                opacity: 1;
-            }
-        }
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 500px;
+    border: 2px solid #4CAF50;
+    border-radius: 25px;
+    outline: none;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    transition: all 0.3s;
+}
+
+    .search-bar:focus {
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+        background-color: white;
+    }
+
+.no-results {
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+}
+
+body.dark-mode .search-bar {
+    background-color: #2d2d2d;
+    color: #f0f0f0;
+    border-color: #4CAF50;
+}
+
+body.dark-mode .no-results {
+    color: #aaa;
+}

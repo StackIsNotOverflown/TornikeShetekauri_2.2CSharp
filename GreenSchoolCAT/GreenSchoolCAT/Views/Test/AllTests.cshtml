@@ -24,40 +24,49 @@
             <span class="input-group-text bg-success text-white">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" id="searchInput" class="search-bar" placeholder="ტესტის ძებნა..." autocomplete="off">
+            <input type="text" id="searchInput" class="form-control search-bar border-success" placeholder="ტესტის ძებნა..." autocomplete="off">
         </div>
     </div>
 
-    <table class="table table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>ტესტის სახელი</th>
-                <th>მასწავლებელი</th>
-                <th>კითხვები</th>
-                <th>შედეგები</th>
-                <th>წაშლა</th>
-            </tr>
-        </thead>
-        <tbody id="resultsTable">
-            @foreach (var test in Model)
-            {
-                <tr class="test-row">
-                    <td class="test-name">@test.Name</td>
-                    <td>@test.TeacherName</td>
-                    <td>@test.QuestionCount</td>
-                    <td>@test.ResultCount</td>
-                    <td>
-                        <form asp-action="DeleteTest" asp-route-id="@test.GuidId" method="post" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ ამ ტესტის წაშლა? ყველა დაკავშირებული კითხვაც წაიშლება!');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i> წაშლა
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ტესტის სახელი</th>
+                            <th>მასწავლებელი</th>
+                            <th>კითხვები</th>
+                            <th>შედეგები</th>
+                            <th>წაშლა</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                        @foreach (var test in Model)
+                        {
+                            <tr class="test-row">
+                                <td class="test-name">@test.Name</td>
+                                <td>@test.TeacherName</td>
+                                <td>@test.QuestionCount</td>
+                                <td>@test.ResultCount</td>
+                                <td>
+                                    <form asp-action="DeleteTest" asp-route-id="@test.GuidId" method="post" onsubmit="return confirm('დარწმუნებული ხართ რომ გსურთ ამ ტესტის წაშლა? ყველა დაკავშირებული კითხვაც წაიშლება!');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> წაშლა
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -86,7 +95,7 @@
                         const tbody = document.getElementById('resultsTable');
                         const tr = document.createElement('tr');
                         tr.id = 'noResultsRow';
-                        tr.innerHTML = '<td colspan="5" class="no-results">ვერ მოიძებნა</td>';
+                        tr.innerHTML = '<td colspan="5" class="text-center py-3 text-muted">ვერ მოიძებნა</td>';
                         tbody.appendChild(tr);
                     }
                 } else if (noResultsRow) {

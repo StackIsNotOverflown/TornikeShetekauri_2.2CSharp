@@ -4,79 +4,77 @@
 }
 
 <div class="container mt-4">
-    <h2 class="text-center text-primary mb-4">ტესტის ატვირთვა</h2>
-
-    <form asp-action="Upload" method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label">ტესტის სახელი</label>
-            <input asp-for="Name" class="form-control" placeholder="შეიყვანეთ ტესტის სახელი" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h2 class="text-center mb-0">ტესტის ატვირთვა</h2>
         </div>
+        <div class="card-body">
+            <form asp-action="Upload" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">ტესტის სახელი</label>
+                    <input asp-for="Name" class="form-control" placeholder="შეიყვანეთ ტესტის სახელი" required />
+                    <span asp-validation-for="Name" class="invalid-feedback"></span>
+                </div>
 
-        <div class="mb-3">
-            <label asp-for="Password" class="form-label">პაროლი</label>
-            <input asp-for="Password" type="text" class="form-control" placeholder="შეიყვანეთ პაროლი" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">პაროლი</label>
+                    <input asp-for="Password" type="text" class="form-control" placeholder="შეიყვანეთ პაროლი" required />
+                    <span asp-validation-for="Password" class="invalid-feedback"></span>
+                </div>
 
-        <div class="mb-3">
-            <label asp-for="ExcelFile" class="form-label">Excel ფაილი</label>
-            <input asp-for="ExcelFile" type="file" class="form-control" accept=".xlsx,.xls" />
-            <small class="form-text text-muted">მხოლოდ Excel ფორმატი (.xlsx, .xls)</small>
-            <span asp-validation-for="ExcelFile" class="text-danger"></span>
-        </div>
+                <div class="mb-3">
+                    <label asp-for="ExcelFile" class="form-label">Excel ფაილი</label>
+                    <input asp-for="ExcelFile" type="file" class="form-control" accept=".xlsx,.xls" required />
+                    <div class="form-text">მხოლოდ Excel ფორმატი (.xlsx, .xls)</div>
+                    <span asp-validation-for="ExcelFile" class="invalid-feedback"></span>
+                </div>
 
-        <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-success btn-lg">
-                <i class="bi bi-upload"></i> ატვირთვა
-            </button>
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-upload me-2"></i>ატვირთვა
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function() {
-            $('form').validate({
-                rules: {
-                    Name: {
-                        required: true,
-                        minlength: 3
-                    },
-                    Password: {
-                        required: true,
-                        minlength: 4
-                    },
-                    ExcelFile: {
-                        required: true
-                    }
-                },
-                messages: {
-                    Name: {
-                        required: "ტესტის სახელის შეყვანა აუცილებელია",
-                        minlength: "ტესტის სახელი უნდა შედგებოდეს მინიმუმ 3 სიმბოლოსგან"
-                    },
-                    Password: {
-                        required: "პაროლის შეყვანა აუცილებელია",
-                        minlength: "პაროლი უნდა შედგებოდეს მინიმუმ 4 სიმბოლოსგან"
-                    },
-                    ExcelFile: {
-                        required: "Excel ფაილის ატვირთვა აუცილებელია"
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.mb-3').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+        (function() {
+            'use strict';
+
+            const form = document.querySelector('.needs-validation');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
+
+                form.classList.add('was-validated');
+            }, false);
+
+            document.querySelector('[asp-for="Name"]').addEventListener('invalid', function() {
+                this.setCustomValidity('ტესტის სახელის შეყვანა აუცილებელია');
             });
-        });
+
+            document.querySelector('[asp-for="Password"]').addEventListener('invalid', function() {
+                this.setCustomValidity('პაროლის შეყვანა აუცილებელია');
+            });
+
+            document.querySelector('[asp-for="ExcelFile"]').addEventListener('invalid', function() {
+                this.setCustomValidity('Excel ფაილის ატვირთვა აუცილებელია');
+            });
+
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.setCustomValidity('');
+                });
+            });
+        })();
     </script>
 }

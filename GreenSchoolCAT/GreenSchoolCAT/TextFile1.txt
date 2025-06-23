@@ -1,0 +1,66 @@
+USE [GreenData];
+GO
+IF OBJECT_ID('dbo.TestResults', 'U') IS NOT NULL DROP TABLE dbo.TestResults;
+IF OBJECT_ID('dbo.QuestionTest', 'U') IS NOT NULL DROP TABLE dbo.QuestionTest;
+IF OBJECT_ID('dbo.Questions', 'U') IS NOT NULL DROP TABLE dbo.Questions;
+IF OBJECT_ID('dbo.Tests', 'U') IS NOT NULL DROP TABLE dbo.Tests;
+IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL DROP TABLE dbo.Users;
+GO
+
+CREATE TABLE Users (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    FullName NVARCHAR(100) NOT NULL,
+    Password NVARCHAR(100) NOT NULL,
+    Role NVARCHAR(20) NOT NULL
+);
+GO
+
+CREATE TABLE Tests (
+    Id INT IDENTITY PRIMARY KEY,
+    GuidId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(1000),
+    Password NVARCHAR(200) NOT NULL,
+    ImagePath NVARCHAR(500),
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    TeacherId UNIQUEIDENTIFIER,
+
+    CONSTRAINT UQ_Tests_GuidId UNIQUE (GuidId),
+    CONSTRAINT FK_Tests_Teacher FOREIGN KEY (TeacherId) REFERENCES Users(Id)
+);
+GO
+
+CREATE TABLE Questions (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    TestId UNIQUEIDENTIFIER NOT NULL,
+    [Text] NVARCHAR(255) NOT NULL,
+    OptionA NVARCHAR(100) NOT NULL,
+    OptionB NVARCHAR(100) NOT NULL,
+    OptionC NVARCHAR(100) NOT NULL,
+    OptionD NVARCHAR(100) NOT NULL,
+    CorrectAnswer NVARCHAR(100) NOT NULL,
+    Discrimination FLOAT,
+    Difficulty FLOAT,
+    Guessing FLOAT,
+
+    CONSTRAINT FK_Questions_Tests FOREIGN KEY (TestId) REFERENCES Tests(GuidId)
+);
+GO
+
+CREATE TABLE TestResults (
+    Id INT IDENTITY PRIMARY KEY,
+    TestId UNIQUEIDENTIFIER NOT NULL,
+    StudentId UNIQUEIDENTIFIER NOT NULL,
+    DateTaken DATETIME NOT NULL,
+    AbilityEstimate FLOAT NOT NULL,
+    Score INT NOT NULL,
+
+    CONSTRAINT FK_TestResults_Tests FOREIGN KEY (TestId) REFERENCES Tests(GuidId),
+    CONSTRAINT FK_TestResults_Users FOREIGN KEY (StudentId) REFERENCES Users(Id)
+);
+GO
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ALTER TABLE Tests
+DROP COLUMN ImagePath;
+alter table Tests
+Drop COLUMN Description;

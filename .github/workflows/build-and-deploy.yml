@@ -13,7 +13,6 @@ env:
   SOLUTION_PATH: ./GreenSchoolCAT/GreenSchoolCAT.sln
   API_PROJECT_PATH: "./GreenSchoolCAT/GreenSchoolCAT/GreenSchoolCAT.csproj"
   PUBLISH_DIR: "./GreenSchoolCAT/GreenSchoolCAT/bin/Release/net8.0/publish"
-
 jobs:
   build_and_test:
     name: Build and Test

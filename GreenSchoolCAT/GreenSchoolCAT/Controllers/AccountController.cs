@@ -41,15 +41,16 @@ namespace GreenSchoolCAT.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("FullName", "სახელი არ მოიძებნა");
+                ViewBag.ErrorMessage = "არასწორი სახელი ან პაროლი";
                 return View();
             }
 
             if (user.Password != password)
             {
-                ModelState.AddModelError("Password", "პაროლი არასწორია");
+                ViewBag.ErrorMessage = "არასწორი სახელი ან პაროლი";
                 return View();
             }
+ 
 
             var claims = new List<Claim>
     {

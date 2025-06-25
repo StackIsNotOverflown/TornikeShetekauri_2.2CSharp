@@ -5,6 +5,15 @@
 <div class="row justify-content-center mt-5">
     <div class="col-md-4">
         <h2 class="text-center">შესვლა</h2>
+        
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @ViewBag.ErrorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <form asp-action="Login" method="post">
             @Html.AntiForgeryToken()
             <div class="mb-3">
@@ -25,3 +34,13 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            setTimeout(function(){
+                $(".alert").alert('close');
+            }, 5000);
+        });
+    </script>
+}

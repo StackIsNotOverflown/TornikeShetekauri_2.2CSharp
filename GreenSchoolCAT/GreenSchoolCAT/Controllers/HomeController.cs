@@ -26,13 +26,13 @@ namespace GreenSchoolCAT.Controllers
         {
             if (!ModelState.IsValid || model.ExcelFile == null || model.ExcelFile.Length == 0)
             {
-                ModelState.AddModelError("ExcelFile", "ატვირთეთ სწორი Excel ფაილი.");
+                ViewBag.ErrorMessage = "ატვირთეთ სწორი ექსელის ფაილი";
                 return View(model);
             }
 
             if (!Path.GetExtension(model.ExcelFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
             {
-                ModelState.AddModelError("ExcelFile", ".xlsx ფორმატია საჭირო.");
+                ViewBag.ErrorMessage = "\"ExcelFile\", \".xlsx ფორმატია საჭირო.\"";
                 return View(model);
             }
 

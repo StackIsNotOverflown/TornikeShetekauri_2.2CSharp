@@ -3,7 +3,13 @@
 }
 
 <h2>შეიყვანეთ ტესტის პაროლი</h2>
-
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 <form asp-action="EnterPasscode" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" name="testId" value="@ViewBag.TestId" />

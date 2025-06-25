@@ -52,7 +52,7 @@ namespace GreenSchoolCAT.Controllers
             var test = await _db.Tests.FirstOrDefaultAsync(t => t.GuidId == testId);
             if (test == null || test.Password != passcode)
             {
-                ModelState.AddModelError("", "Incorrect password or test not found.");
+                ViewBag.ErrorMessage = "პაროლი";
                 ViewBag.TestId = testId;
                 return View();
             }

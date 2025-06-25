@@ -64,3 +64,49 @@ ALTER TABLE Tests
 DROP COLUMN ImagePath;
 alter table Tests
 Drop COLUMN Description;
+\///////////////////////////////////////////////////////////////////////////////////////
+CREATE PROCEDURE DecryptUserPassword
+    @UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    OPEN SYMMETRIC KEY TestDataKey DECRYPTION BY CERTIFICATE GreenCert;
+
+    SELECT
+        Id,
+        FullName,
+        CONVERT(nvarchar, DecryptByKey(Password)) AS Password,
+        Role
+    FROM Users
+    WHERE Id = @UserId;
+
+    CLOSE SYMMETRIC KEY TestDataKey;
+END
+/////////////////////////////////////////////////////
+ALTER TABLE Users
+DROP COLUMN Password;
+
+
+ALTER TABLE Users
+ADD Password VARBINARY(MAX) NULL;
+
+OPEN SYMMETRIC KEY TestDataKey DECRYPTION BY CERTIFICATE GreenCert;
+
+UPDATE Users
+SET Password = EncryptByKey(Key_GUID('TestDataKey'), CONVERT(varbinary(max),'123
+
+ALTER PROCEDURE [dbo].[DecryptUserByFullName]
+    @FullName NVARCHAR(100)
+AS
+BEGIN
+    OPEN SYMMETRIC KEY TestDataKey DECRYPTION BY CERTIFICATE GreenCert;
+
+    SELECT
+        Id,
+        FullName,
+        CONVERT(NVARCHAR(100), DecryptByKey(Password)) AS Password,
+        Role
+    FROM Users
+    WHERE FullName = @FullName;
+
+    CLOSE SYMMETRIC KEY TestDataKey;
+END

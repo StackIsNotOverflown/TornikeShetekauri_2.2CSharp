@@ -3,8 +3,8 @@ using GreenSchoolCAT.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,11 +12,11 @@ namespace GreenSchoolCAT.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly UserRepository _userRepository;
 
-        public AccountController(ApplicationDbContext db)
+        public AccountController(IConfiguration config)
         {
-            _db = db;
+            _userRepository = new UserRepository(config.GetConnectionString("DefaultConnection"));
         }
 
         [HttpGet]
@@ -37,31 +37,34 @@ namespace GreenSchoolCAT.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string fullName, string password)
         {
-            var user = _db.Users.FirstOrDefault(u => u.FullName == fullName && u.Password == password);
+            var user = _userRepository.DecryptedUser(fullName);
 
             if (user == null)
             {
-                ModelState.AddModelError("", "არასწორი ლოგინი(საწოლზე არ ვსაუბრობ)");
+                ModelState.AddModelError("FullName", "სახელი არ მოიძებნა");
+                return View();
+            }
+
+            if (user.Password != password)
+            {
+                ModelState.AddModelError("Password", "პაროლი არასწორია");
                 return View();
             }
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FullName),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity)
-            );
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
             return user.Role == "Teacher"
-              ? RedirectToAction("TeacherHome", "Home")
-              : RedirectToAction("StudentHome", "Home");
-        }       
+                ? RedirectToAction("TeacherHome", "Home")
+                : RedirectToAction("StudentHome", "Home");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

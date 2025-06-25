@@ -1,0 +1,65 @@
+name: Build and Deploy ASP.NET Core app to Azure
+
+on:
+  push:
+    branches:
+      - main  
+
+env:
+  AZURE_WEBAPP_NAME: CATTEST 
+  AZURE_WEBAPP_PACKAGE_PATH: "./GreenSchoolCAT/bin/Release/net8.0/publish"
+  DotNetVersion: "8.x"
+  SOLUTION_PATH: "./GreenSchoolCAT.sln"
+  API_PROJECT_PATH: "./GreenSchoolCAT/GreenSchoolCAT.csproj"
+  PUBLISH_DIR: "./GreenSchoolCAT/bin/Release/net8.0/publish"
+
+jobs:
+ Build and Test:
+  name : Build and Test
+  runs-on: ubuntu-latest
+ steps:
+   - uses: actions/checkout@v4
+  
+   - name: Setup .NET
+     uses: actions/setup-dotnet@v4
+     with:
+       dotnet-version: ${{ env.DotNet_Version }}
+
+   - name: Restore
+     run: dotnet restore ${{ env.SOLUTION_PATH }}
+   - name: Build
+     run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+   - name: Publish
+     run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --no restore --no build --property:PublishDir=${{ env.PUBLISH_DIR }}
+
+   - name: publish Artifacts
+     uses: actions/upload-artifact@v4
+     with:
+        name: webapp
+        Path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy:
+   name: Deploy to Azure
+   Runs-on: ubuntu-latest
+   needs: [build-and-test]
+
+    steps:
+    - name: Downloadartifact from build job
+      uses: actions/download-artifact@v4
+      with:
+       name: webapp
+       path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    - name: Deploy
+      uses: azure/webapps-deploy@v2
+      with:
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+            package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+     
+
+
+
+   
+     
+    
+       

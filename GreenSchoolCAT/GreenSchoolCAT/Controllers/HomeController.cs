@@ -63,10 +63,10 @@ namespace GreenSchoolCAT.Controllers
                     var correctOption = row.Cell(6).GetString().Trim();
                     var correctAnswer = correctOption switch
                     {
-                        "OptionA" => row.Cell(2).GetString(), // ჯერჯერობით არ ცვლი ერთ ასოიანებად რადგან სატესტო ფაილები ყველა ეგრეა და მაგათი შეცვლა მეზარებააა.
-                        "OptionB" => row.Cell(3).GetString(),
-                        "OptionC" => row.Cell(4).GetString(),
-                        "OptionD" => row.Cell(5).GetString(),
+                        "A" => row.Cell(2).GetString(),
+                        "B" => row.Cell(3).GetString(),
+                        "C" => row.Cell(4).GetString(),
+                        "D" => row.Cell(5).GetString(),
                         _ => null
                     };
 

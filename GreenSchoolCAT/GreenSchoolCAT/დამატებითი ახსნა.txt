@@ -1,2 +1,61 @@
 ﻿ეს პროექტი არის ანალოგი ჩემი სკოლის პრივატული სქულბუქის, მაგრამ კატის ტესტირება
 მათ პრაქტიკას მივყევი და სწორედმ მაგიტომ არაა არც ადმინი, და არც რეგისტრაცია რადგან ასეთი ცვლილებები ხდება პირდაპირ დატაბაზიდან და სკოლის მოთხოვნით
+name: Build and Deploy ASP.NET Core app to Azure
+გამოყენებული .ylm ფაილი workflow-ში action-ისთვის მივყევი ამ ვიდეოს: https://www.youtube.com/watch?v=6qPzeB0dN9o
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: CATTEST
+  AZURE_WEBAPP_PACKAGE_PATH: ./GreenSchoolCAT/GreenSchoolCAT/bin/Release/net8.0/publish
+  DOTNET_VERSION: '8.x'
+  SOLUTION_PATH: ./GreenSchoolCAT/GreenSchoolCAT.sln
+  API_PROJECT_PATH: ./GreenSchoolCAT/GreenSchoolCAT/GreenSchoolCAT.csproj
+  PUBLISH_DIR: ./GreenSchoolCAT/GreenSchoolCAT/bin/Release/net8.0/publish
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --no-restore --output ${{ env.PUBLISH_DIR }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: published_app
+          path: ${{ env.PUBLISH_DIR }}
+
+  deploy:
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: published_app
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

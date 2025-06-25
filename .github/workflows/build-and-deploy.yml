@@ -10,7 +10,7 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: "./GreenSchoolCAT/bin/Release/net8.0/publish"
   DotNet_Version: "8.x"
   SOLUTION_PATH: ./GreenSchoolCAT/GreenSchoolCAT.sln
-  API_PROJECT_PATH: "./GreenSchoolCAT/GreenSchoolCAT.csproj"
+  API_PROJECT_PATH: "./GreenSchoolCAT/GreenSchoolCAT/GreenSchoolCAT.csproj"
   PUBLISH_DIR: "./GreenSchoolCAT/bin/Release/net8.0/publish"
 
 jobs:

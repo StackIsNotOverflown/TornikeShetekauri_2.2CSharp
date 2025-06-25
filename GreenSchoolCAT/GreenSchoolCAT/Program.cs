@@ -1,64 +1,37 @@
-﻿using GreenSchoolCAT.Data;
+﻿using DocumentFormat.OpenXml.Vml;
+using GreenSchoolCAT.Data;
 using GreenSchoolCAT.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.WebHost.UseSetting("preventHostingStartup", "true"); 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Limits.MaxRequestBodySize = 10 * 1024 * 1024; 
-});
-
 builder.Services.AddDbContext<ApplicationDbContext>(opts =>
-    opts.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        o => o.EnableRetryOnFailure(
-            maxRetryCount: 3,
-            maxRetryDelay: TimeSpan.FromSeconds(5),
-            errorNumbersToAdd: null)));
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-builder.Services.AddControllersWithViews()
-    .AddViewOptions(options =>
-    {
-        options.HtmlHelperOptions.ClientValidationEnabled = false; 
-    });
+builder.Services.AddScoped<ICatService, CatService>();
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opts =>
     {
-        opts.Cookie.Name = "CAT.Auth"; 
         opts.LoginPath = "/Account/Login";
         opts.AccessDeniedPath = "/Account/Login";
-        opts.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
-        opts.SlidingExpiration = true;
+        opts.ExpireTimeSpan = TimeSpan.FromHours(1);
     });
 
-ThreadPool.SetMinThreads(4, 4);
-ThreadPool.SetMaxThreads(8, 8);
-
+builder.Services.AddAuthorization();
+builder.WebHost.UseSetting("preventHostingStartup", "true");
+ThreadPool.SetMaxThreads(Environment.ProcessorCount * 2, 1000);
 var app = builder.Build();
-
-app.UseResponseCompression(); 
 app.UseHttpsRedirection();
-app.UseStaticFiles(new StaticFileOptions
-{
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=3600"; // Better caching
-    }
-});
-
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
-app.Logger.LogInformation("Application configured for Free Tier");
 app.Run();
